@@ -9,7 +9,7 @@ type Example = {
   explanation?: string;
 };
 
-type QuestionProps = {
+type DecriptionQuestionProps = {
   title: string;
   difficulty: "Easy" | "Medium" | "Hard";
   description: string;
@@ -23,13 +23,13 @@ const difficultyStyles = {
   Hard: "bg-rose-50 text-rose-700 ring-rose-200",
 };
 
-export default function Question({
+export default function DecriptionQuestion({
   title,
   difficulty,
   description,
   examples,
   constraints,
-}: QuestionProps) {
+}: DecriptionQuestionProps) {
   return (
     <aside className="flex h-full min-h-0 flex-col bg-[#fcfcfd]">
       <div className="border-b border-gray-200 px-5 py-4">

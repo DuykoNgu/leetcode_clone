@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { Toaster } from "sonner";
 import Nav from "@/components/Nav";
 
 export default function AppLayout({
@@ -12,6 +13,7 @@ export default function AppLayout({
         <Nav />
       </Suspense>
       {children}
+      <Toaster richColors position="top-center" />
     </>
   );
 }
