@@ -16,7 +16,7 @@ bun dev
 
 ### 2. Cấu hình môi trường
 
-Sao chép file `.env.example` thành `.env` và cập nhật các biến:
+Sao chép file `.env.example` thành `.env.local` và cập nhật các biến:
 
 ```env.local
 API_HOST=localhost
