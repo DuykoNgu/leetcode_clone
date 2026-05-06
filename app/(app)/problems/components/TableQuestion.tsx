@@ -49,7 +49,11 @@ export default function TableQuestion({
       toast.error("Vui lòng đăng nhập để tiếp tục");
       const currentPath = window.location.pathname;
       const targetPath = `/problems/${problemId}`;
-      window.history.pushState(null, "", `${currentPath}?showLogin=true&redirectTo=${targetPath}`);
+      window.history.pushState(
+        null,
+        "",
+        `${currentPath}?showLogin=true&redirectTo=${targetPath}`,
+      );
       return;
     }
     router.push(`/problems/${problemId}`);
@@ -63,11 +67,21 @@ export default function TableQuestion({
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent border-b border-slate-100 bg-slate-50/50">
-              <TableHead className="w-16 h-12 text-[11px] font-bold uppercase tracking-wider text-slate-400 pl-6">Status</TableHead>
-              <TableHead className="h-12 text-[11px] font-bold uppercase tracking-wider text-slate-400">Title</TableHead>
-              <TableHead className="w-40 h-12 text-[11px] font-bold uppercase tracking-wider text-slate-400 text-center">Solution</TableHead>
-              <TableHead className="w-40 h-12 text-[11px] font-bold uppercase tracking-wider text-slate-400 text-center">Acceptance</TableHead>
-              <TableHead className="w-32 h-12 text-[11px] font-bold uppercase tracking-wider text-slate-400 text-right pr-8">Difficulty</TableHead>
+              <TableHead className="w-16 h-12 text-[11px] font-bold uppercase tracking-wider text-slate-400 pl-6">
+                Status
+              </TableHead>
+              <TableHead className="h-12 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                Title
+              </TableHead>
+              <TableHead className="w-40 h-12 text-[11px] font-bold uppercase tracking-wider text-slate-400 text-center">
+                Solution
+              </TableHead>
+              <TableHead className="w-40 h-12 text-[11px] font-bold uppercase tracking-wider text-slate-400 text-center">
+                Acceptance
+              </TableHead>
+              <TableHead className="w-32 h-12 text-[11px] font-bold uppercase tracking-wider text-slate-400 text-right pr-8">
+                Difficulty
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -78,7 +92,9 @@ export default function TableQuestion({
                     <div className="p-4 rounded-full bg-slate-50">
                       <Lock className="size-8" />
                     </div>
-                    <p className="text-sm font-medium">No problems match your filters</p>
+                    <p className="text-sm font-medium">
+                      No problems match your filters
+                    </p>
                   </div>
                 </TableCell>
               </TableRow>
@@ -92,7 +108,7 @@ export default function TableQuestion({
                     onClick={() => handleProblemSelect(problem.id)}
                     className={cn(
                       "group cursor-pointer border-b border-slate-50 transition-all hover:bg-slate-50/80",
-                      index % 2 === 1 && "bg-slate-50/20"
+                      index % 2 === 1 && "bg-slate-50/20",
                     )}
                   >
                     <TableCell className="py-4 pl-6">
@@ -106,7 +122,7 @@ export default function TableQuestion({
                         </div>
                       )}
                     </TableCell>
-                    
+
                     <TableCell className="py-4">
                       <div className="flex flex-col">
                         <span className="text-[15px] font-semibold text-slate-700 group-hover:text-brand-orange transition-colors">
@@ -120,7 +136,10 @@ export default function TableQuestion({
 
                     <TableCell className="py-4 text-center">
                       <div className="flex justify-center">
-                        <Badge variant="outline" className="bg-white text-slate-400 border-slate-200 font-medium hover:border-brand-orange hover:text-brand-orange transition-colors">
+                        <Badge
+                          variant="outline"
+                          className="bg-white text-slate-400 border-slate-200 font-medium hover:border-brand-orange hover:text-brand-orange transition-colors"
+                        >
                           Video
                         </Badge>
                       </div>
@@ -141,7 +160,12 @@ export default function TableQuestion({
                     </TableCell>
 
                     <TableCell className="py-4 text-right pr-8">
-                      <Badge className={cn("px-3 py-1 rounded-lg font-bold shadow-sm", difficultyStyles[problem.difficulty])}>
+                      <Badge
+                        className={cn(
+                          "px-3 py-1 rounded-lg font-bold shadow-sm",
+                          difficultyStyles[problem.difficulty],
+                        )}
+                      >
                         {problem.difficulty}
                       </Badge>
                     </TableCell>
@@ -154,36 +178,52 @@ export default function TableQuestion({
       </div>
 
       {/* Stats Footer */}
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <StatCard 
-          title="Total Problems" 
-          value={totalCount.toString()} 
-          subtitle="Curated for you" 
-          color="bg-blue-500" 
-        />
-        <StatCard 
-          title="Solved" 
-          value={(userStats?.solvedCount ?? solvedCount).toString()} 
-          subtitle={`${totalCount > 0 ? Math.round(((userStats?.solvedCount ?? solvedCount) / totalCount) * 100) : 0}% Completion`} 
-          color="bg-emerald-500" 
-        />
-        <StatCard 
-          title="Current Streak" 
-          value={`${userStats?.streakDays ?? 0} Days`} 
-          subtitle="Keep it up!" 
-          color="bg-orange-500" 
-        />
-      </div>
+      {isAuthenticated ? (
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <StatCard
+            title="Total Problems"
+            value={totalCount.toString()}
+            subtitle="Curated for you"
+            color="bg-blue-500"
+          />
+          <StatCard
+            title="Solved"
+            value={(userStats?.solvedCount ?? solvedCount).toString()}
+            subtitle={`${totalCount > 0 ? Math.round(((userStats?.solvedCount ?? solvedCount) / totalCount) * 100) : 0}% Completion`}
+            color="bg-emerald-500"
+          />
+          <StatCard
+            title="Current Streak"
+            value={`${userStats?.streakDays ?? 0} Days`}
+            subtitle="Keep it up!"
+            color="bg-orange-500"
+          />
+        </div>
+      ) : (
+        <></>
+      )}
     </div>
   );
 }
 
-function StatCard({ title, value, subtitle, color }: { title: string, value: string, subtitle: string, color: string }) {
+function StatCard({
+  title,
+  value,
+  subtitle,
+  color,
+}: {
+  title: string;
+  value: string;
+  subtitle: string;
+  color: string;
+}) {
   return (
     <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-xl shadow-slate-200/40">
       <div className="flex items-center gap-4">
         <div className={cn("size-2 rounded-full animate-pulse", color)} />
-        <span className="text-xs font-bold uppercase tracking-widest text-slate-400">{title}</span>
+        <span className="text-xs font-bold uppercase tracking-widest text-slate-400">
+          {title}
+        </span>
       </div>
       <div className="mt-2 flex items-baseline gap-2">
         <span className="text-3xl font-bold text-slate-900">{value}</span>

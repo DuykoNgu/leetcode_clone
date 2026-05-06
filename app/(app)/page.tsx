@@ -12,7 +12,7 @@ export default function Hello2Page() {
         onClick={() => router.push("/")}
         className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
       >
-        Quay láº¡i trang chá»§
+        Go to Hello World 1
       </button>
     </div>
   );
