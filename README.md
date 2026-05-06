@@ -14,6 +14,21 @@ pnpm dev
 bun dev
 ```
 
+### 2. Cấu hình môi trường
+
+Sao chép file `.env.example` thành `.env` và cập nhật các biến:
+
+```env.local
+API_HOST=localhost
+API_PORT=5000
+API_BASE_URL=http://localhost:5000
+NEXT_PUBLIC_API_HOST=localhost
+NEXT_PUBLIC_API_PORT=5000
+NEXT_PUBLIC_API_BASE_URL=http://localhost:5000/api
+
+```
+
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
