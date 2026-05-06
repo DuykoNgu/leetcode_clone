@@ -2,8 +2,8 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { useDebounce } from "@/hooks/useDebounce";
 import { getProblems } from "@/lib/api/problems";
-import { MOCK_PROBLEMS } from "@/lib/data/mock-problems";
 import type { DBProblem, ProblemCategory } from "@/lib/types";
 import FilterSection, { FilterState } from "./FilterSection";
 import TableQuestion from "./TableQuestion";
@@ -27,77 +27,70 @@ export default function ListQuestion({
   const [sortBy, setSortBy] = useState<SortOption>("default");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
   const [localSearch, setLocalSearch] = useState("");
+  const debouncedSearch = useDebounce(localSearch, 500);
   const [showSearch, setShowSearch] = useState(false);
   const [localCategory, setLocalCategory] = useState<ProblemCategory>("algorithms");
   const [localDifficulty, setLocalDifficulty] = useState<string>("");
   const [solvedProblemIds, setSolvedProblemIds] = useState<Set<string>>(new Set());
   const [problems, setProblems] = useState<DBProblem[]>([]);
+  const [userStats, setUserStats] = useState({ solvedCount: 0, streakDays: 0 });
   const { isAuthenticated } = useAuth();
 
-  const effectiveSearch = searchQuery || localSearch;
+  const effectiveSearch = searchQuery || debouncedSearch;
   const effectiveCategory = categoryFilter || localCategory;
   const effectiveDifficulty = difficultyFilter || localDifficulty;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const apiData = await getProblems();
+        const params = {
+          search: effectiveSearch,
+          category: effectiveCategory === "all-code-essentials" ? undefined : effectiveCategory,
+          difficulty: effectiveDifficulty || undefined,
+        };
+        const response = await getProblems(params);
+        const apiData = response.data;
+        
+        if (response.userStats) {
+          setUserStats(response.userStats);
+        }
+
         const difficultyMap: Record<number, "Easy" | "Medium" | "Hard"> = {
           0: "Easy",
           1: "Medium",
           2: "Hard",
         };
-        const mappedData: DBProblem[] = apiData.map((problem) => ({
-          id: problem.id,
-          title: problem.title,
-          difficulty: difficultyMap[problem.difficulty] || "Medium",
-          category: "algorithms",
-          order: 0,
-          acceptanceRate: Number(problem.acceptanceRate), // Convert string to number
-          createdAt: problem.createdAt,
-        }));
+        
+        const solvedIds = new Set<string>();
+        const mappedData: DBProblem[] = apiData.map((problem: any) => {
+          if (problem.isSolved) {
+            solvedIds.add(problem.id);
+          }
+          return {
+            id: problem.id,
+            title: problem.title,
+            difficulty: difficultyMap[problem.difficulty] || "Medium",
+            category: "algorithms",
+            order: 0,
+            acceptanceRate: Number(problem.acceptanceRate),
+            createdAt: problem.createdAt,
+            isSolved: problem.isSolved
+          };
+        });
+        
         setProblems(mappedData);
+        setSolvedProblemIds(solvedIds);
       } catch (error) {
-        console.error("Failed to fetch problems, using mock data:", error);
-        setProblems(MOCK_PROBLEMS);
+        console.error("Failed to fetch problems:", error);
+        setProblems([]);
       }
     };
     fetchData();
-  }, []);
+  }, [isAuthenticated, effectiveSearch, effectiveCategory, effectiveDifficulty]);
 
-  useEffect(() => {
-    const saved = localStorage.getItem("leetcode_solved_problems");
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved) as string[];
-        setSolvedProblemIds(new Set(parsed));
-      } catch {
-        // Ignore parse errors
-      }
-    }
-  }, []);
 
   const filteredProblems = useMemo(() => {
-    const filtered = problems.filter((problem) => {
-      if (effectiveCategory !== "all-code-essentials" && effectiveCategory !== "algorithms") {
-        if (problem.category !== effectiveCategory) return false;
-      }
-
-      if (effectiveSearch) {
-        const searchLower = effectiveSearch.toLowerCase();
-        if (!problem.title.toLowerCase().includes(searchLower)) {
-          return false;
-        }
-      }
-
-      if (effectiveDifficulty && problem.difficulty !== effectiveDifficulty) {
-        return false;
-      }
-
-      return true;
-    });
-
-    return [...filtered].sort((a, b) => {
+    return [...problems].sort((a, b) => {
       if (sortBy === "default") {
         return (a.order ?? 0) - (b.order ?? 0);
       }
@@ -147,7 +140,7 @@ export default function ListQuestion({
   };
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col bg-slate-50/50">
       <FilterSection
         filterState={filterState}
         onSearchChange={setLocalSearch}
@@ -157,14 +150,17 @@ export default function ListQuestion({
         onSortToggle={toggleSort}
       />
 
-      <div className="flex-1 overflow-y-auto">
-        <TableQuestion
-          problems={filteredProblems}
-          totalCount={problems.length}
-          solvedProblemIds={solvedProblemIds}
-          onProblemSelect={onProblemSelect || (() => {})}
-          isAuthenticated={isAuthenticated}
-        />
+      <div className="flex-1 overflow-y-auto scrollbar-hide">
+        <div className="max-w-7xl mx-auto py-4">
+          <TableQuestion
+            problems={filteredProblems}
+            totalCount={problems.length}
+            solvedProblemIds={solvedProblemIds}
+            onProblemSelect={onProblemSelect || (() => {})}
+            isAuthenticated={isAuthenticated}
+            userStats={userStats}
+          />
+        </div>
       </div>
     </div>
   );

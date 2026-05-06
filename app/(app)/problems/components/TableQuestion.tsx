@@ -11,8 +11,9 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { Check } from "lucide-react";
+import { Check, Lock, Play } from "lucide-react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 type TableQuestionProps = {
   problems: DBProblem[];
@@ -20,6 +21,10 @@ type TableQuestionProps = {
   solvedProblemIds: Set<string>;
   onProblemSelect: (problemId: string) => void;
   isAuthenticated?: boolean;
+  userStats?: {
+    solvedCount: number;
+    streakDays: number;
+  };
 };
 
 const difficultyStyles: Record<string, string> = {
@@ -34,56 +39,47 @@ export default function TableQuestion({
   solvedProblemIds,
   onProblemSelect,
   isAuthenticated = true,
+  userStats,
 }: TableQuestionProps) {
+  const router = useRouter();
   const solvedCount = solvedProblemIds.size;
 
   const handleProblemSelect = (problemId: string) => {
     if (!isAuthenticated) {
-      toast.error("Bạn cần đăng nhập trước để làm bài này");
+      toast.error("Vui lòng đăng nhập để tiếp tục");
+      const currentPath = window.location.pathname;
+      const targetPath = `/problems/${problemId}`;
+      window.history.pushState(null, "", `${currentPath}?showLogin=true&redirectTo=${targetPath}`);
       return;
     }
+    router.push(`/problems/${problemId}`);
     onProblemSelect(problemId);
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 py-8">
-      {/* Header Section - Đưa ra ngoài Card */}
-      <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
-          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-orange-500 mb-1">
-            Problem Set
-          </p>
-          <h2 className="text-3xl font-bold text-slate-900 tracking-tight">
-            Curated coding questions
-          </h2>
-        </div>
-        
-        <div className="flex items-center gap-3">
-           <div className="px-4 py-1.5 rounded-full bg-emerald-50 text-emerald-700 text-sm font-medium">
-             {solvedCount} solved
-           </div>
-           <div className="px-4 py-1.5 rounded-full bg-orange-50 text-orange-600 text-sm font-medium">
-             {problems.length}/{totalCount} visible
-           </div>
-        </div>
-      </div>
-
+    <div className="w-full max-w-7xl mx-auto px-6 py-8">
       {/* Table Section */}
-      <div className="overflow-x-auto">
-        <Table className="min-w-[800px]">
+      <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-xl shadow-slate-200/50">
+        <Table>
           <TableHeader>
-            <TableRow className="hover:bg-transparent border-b border-slate-100">
-              <TableHead className="w-16 text-[11px] font-bold uppercase text-slate-400">STT</TableHead>
-              <TableHead className="text-[11px] font-bold uppercase text-slate-400">Title</TableHead>
-              <TableHead className="w-40 text-[11px] font-bold uppercase text-slate-400 text-center">Acceptance</TableHead>
-              <TableHead className="w-32 text-[11px] font-bold uppercase text-slate-400 text-right px-6">Difficulty</TableHead>
+            <TableRow className="hover:bg-transparent border-b border-slate-100 bg-slate-50/50">
+              <TableHead className="w-16 h-12 text-[11px] font-bold uppercase tracking-wider text-slate-400 pl-6">Status</TableHead>
+              <TableHead className="h-12 text-[11px] font-bold uppercase tracking-wider text-slate-400">Title</TableHead>
+              <TableHead className="w-40 h-12 text-[11px] font-bold uppercase tracking-wider text-slate-400 text-center">Solution</TableHead>
+              <TableHead className="w-40 h-12 text-[11px] font-bold uppercase tracking-wider text-slate-400 text-center">Acceptance</TableHead>
+              <TableHead className="w-32 h-12 text-[11px] font-bold uppercase tracking-wider text-slate-400 text-right pr-8">Difficulty</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {problems.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4} className="h-40 text-center text-slate-400">
-                  No problems found
+                <TableCell colSpan={5} className="h-64 text-center">
+                  <div className="flex flex-col items-center justify-center gap-2 text-slate-400">
+                    <div className="p-4 rounded-full bg-slate-50">
+                      <Lock className="size-8" />
+                    </div>
+                    <p className="text-sm font-medium">No problems match your filters</p>
+                  </div>
                 </TableCell>
               </TableRow>
             ) : (
@@ -94,45 +90,58 @@ export default function TableQuestion({
                   <TableRow
                     key={problem.id}
                     onClick={() => handleProblemSelect(problem.id)}
-                    className="group cursor-pointer border-none hover:bg-slate-50/50 transition-colors"
+                    className={cn(
+                      "group cursor-pointer border-b border-slate-50 transition-all hover:bg-slate-50/80",
+                      index % 2 === 1 && "bg-slate-50/20"
+                    )}
                   >
-                    <TableCell className="py-5">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium text-slate-400 w-6">
-                          {index + 1}
-                        </span>
-                        {solved && (
-                          <div className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
-                            <Check className="h-3 w-3" strokeWidth={4} />
-                          </div>
-                        )}
-                      </div>
+                    <TableCell className="py-4 pl-6">
+                      {solved ? (
+                        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 shadow-sm">
+                          <Check className="h-3.5 w-3.5" strokeWidth={3} />
+                        </div>
+                      ) : (
+                        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 text-slate-300 group-hover:bg-brand-orange/10 group-hover:text-brand-orange transition-colors">
+                          <Play className="h-3 w-3 fill-current" />
+                        </div>
+                      )}
                     </TableCell>
                     
-                    <TableCell className="py-5">
-                      <span className="text-base font-semibold text-slate-800 group-hover:text-orange-500 transition-colors">
-                        {problem.title}
-                      </span>
+                    <TableCell className="py-4">
+                      <div className="flex flex-col">
+                        <span className="text-[15px] font-semibold text-slate-700 group-hover:text-brand-orange transition-colors">
+                          {index + 1}. {problem.title}
+                        </span>
+                        <span className="text-[11px] text-slate-400 font-medium">
+                          Algorithms • Array, Hash Table
+                        </span>
+                      </div>
                     </TableCell>
 
-                    <TableCell className="py-5">
-                      <div className="flex items-center justify-center gap-3">
-                        <div className="hidden md:block h-1.5 w-16 overflow-hidden rounded-full bg-slate-100">
+                    <TableCell className="py-4 text-center">
+                      <div className="flex justify-center">
+                        <Badge variant="outline" className="bg-white text-slate-400 border-slate-200 font-medium hover:border-brand-orange hover:text-brand-orange transition-colors">
+                          Video
+                        </Badge>
+                      </div>
+                    </TableCell>
+
+                    <TableCell className="py-4">
+                      <div className="flex flex-col items-center gap-1.5">
+                        <div className="h-1.5 w-24 overflow-hidden rounded-full bg-slate-100">
                           <div
-                            className="h-full rounded-full bg-orange-400"
+                            className="h-full rounded-full bg-brand-orange shadow-[0_0_8px_rgba(255,161,22,0.4)]"
                             style={{ width: `${problem.acceptanceRate ?? 0}%` }}
                           />
                         </div>
-<span className="text-sm font-medium text-slate-500">
-                          {problem.acceptanceRate !== undefined 
-                            ? problem.acceptanceRate.toFixed(1) 
-                            : (50 + (problem.order ?? 0) % 40).toFixed(1)}%
+                        <span className="text-[12px] font-bold text-slate-500">
+                          {problem.acceptanceRate?.toFixed(1)}%
                         </span>
                       </div>
                     </TableCell>
 
-                    <TableCell className="py-5 text-right px-6">
-                      <Badge className={cn("px-3 py-1 rounded-lg shadow-none", difficultyStyles[problem.difficulty])}>
+                    <TableCell className="py-4 text-right pr-8">
+                      <Badge className={cn("px-3 py-1 rounded-lg font-bold shadow-sm", difficultyStyles[problem.difficulty])}>
                         {problem.difficulty}
                       </Badge>
                     </TableCell>
@@ -144,14 +153,41 @@ export default function TableQuestion({
         </Table>
       </div>
 
-      {/* Footer Section */}
-      <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-6 px-2">
-        <p className="text-sm text-slate-500">
-          Showing <span className="font-bold text-slate-900">{problems.length}</span> of <span className="font-bold text-slate-900">{totalCount}</span> problems
-        </p>
-        <p className="text-sm font-medium text-slate-500">
-          <span className="text-orange-500">{Math.round((solvedCount / totalCount) * 100)}%</span> solved
-        </p>
+      {/* Stats Footer */}
+      <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <StatCard 
+          title="Total Problems" 
+          value={totalCount.toString()} 
+          subtitle="Curated for you" 
+          color="bg-blue-500" 
+        />
+        <StatCard 
+          title="Solved" 
+          value={(userStats?.solvedCount ?? solvedCount).toString()} 
+          subtitle={`${totalCount > 0 ? Math.round(((userStats?.solvedCount ?? solvedCount) / totalCount) * 100) : 0}% Completion`} 
+          color="bg-emerald-500" 
+        />
+        <StatCard 
+          title="Current Streak" 
+          value={`${userStats?.streakDays ?? 0} Days`} 
+          subtitle="Keep it up!" 
+          color="bg-orange-500" 
+        />
+      </div>
+    </div>
+  );
+}
+
+function StatCard({ title, value, subtitle, color }: { title: string, value: string, subtitle: string, color: string }) {
+  return (
+    <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-xl shadow-slate-200/40">
+      <div className="flex items-center gap-4">
+        <div className={cn("size-2 rounded-full animate-pulse", color)} />
+        <span className="text-xs font-bold uppercase tracking-widest text-slate-400">{title}</span>
+      </div>
+      <div className="mt-2 flex items-baseline gap-2">
+        <span className="text-3xl font-bold text-slate-900">{value}</span>
+        <span className="text-xs font-medium text-slate-500">{subtitle}</span>
       </div>
     </div>
   );

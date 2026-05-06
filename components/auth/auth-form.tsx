@@ -1,7 +1,7 @@
 "use client";
 
 import { useTransition, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   AuthCheckbox,
@@ -19,6 +19,7 @@ type RegisterPayload = { username: string; email: string; password: string; conf
 
 export function AuthForm({ mode }: { mode: AuthMode }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { login, register } = useAuth();
   const [isPending, startSubmitTransition] = useTransition();
   const [errorMessage, setErrorMessage] = useState("");
@@ -38,7 +39,14 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
         if (isLogin) {
           await login({ email, password } as LoginPayload);
           setSuccessMessage("Login successful");
-          router.replace("/");
+          
+          const redirectTo = searchParams.get("redirectTo");
+          if (redirectTo) {
+            router.replace(redirectTo);
+          } else {
+            // Stay on current page but remove auth query params
+            router.replace(window.location.pathname);
+          }
           return;
         }
 

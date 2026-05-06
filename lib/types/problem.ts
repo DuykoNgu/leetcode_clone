@@ -19,17 +19,57 @@ export type DBProblem = {
   videoId?: string;
   link?: string;
   createdAt?: string;
+  isSolved?: boolean;
+};
+
+export type CodeTemplate = {
+  id: string;
+  language: string;
+  starterCode: string;
+  solutionCode?: string;
+};
+
+export type TestCase = {
+  id: string;
+  input: string;
+  expectedOutput: string;
+  isHidden: boolean;
+};
+
+export type Submission = {
+  id: string;
+  language: string;
+  code: string;
+  status: string;
+  runtimeMs?: number;
+  memoryKb?: number;
+  submittedAt: string;
 };
 
 export type ApiProblem = {
   id: string;
   title: string;
-  acceptanceRate: number;  // API returns string
-  difficulty: number;  // 0 = Easy, 1 = Medium, 2 = Hard
+  description: string;
+  acceptanceRate: number;
+  difficulty: number;
   createdAt?: string;
+  codeTemplates?: CodeTemplate[];
+  testCases?: TestCase[];
+  submissions?: Submission[];
+  isSolved?: boolean;
 };
 
 export type ProblemsResponse = {
   message: string;
   data: ApiProblem[];
+  userStats?: {
+    solvedCount: number;
+    streakDays: number;
+  };
+  pagination?: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
 };

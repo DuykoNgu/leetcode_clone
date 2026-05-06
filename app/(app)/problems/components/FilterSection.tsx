@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { MOCK_PROBLEMS, CATEGORIES } from "@/lib/data/mock-problems";
-import type { DBProblem, ProblemCategory } from "@/lib/types";
-import { Search } from "lucide-react";
+import { CATEGORIES } from "@/lib/constants/problems";
+import type { ProblemCategory } from "@/lib/types";
+import { Search, ArrowUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type SortOption = "default" | "difficulty" | "acceptance";
 type SortDirection = "asc" | "desc";
@@ -37,7 +37,6 @@ export default function FilterSection({
 }: FilterSectionProps) {
   const {
     localSearch,
-    showSearch,
     localCategory,
     localDifficulty,
     sortBy,
@@ -45,73 +44,87 @@ export default function FilterSection({
   } = filterState;
 
   return (
-    <div className="p-3">
-      <div className="flex items-center gap-2 flex-wrap">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={onShowSearchToggle}
-            className="shrink-0 p-2"
-            style={{ background: "transparent" }}
-          >
-            <Search size={16} />
-          </button>
-          <div
-            className={`transition-all duration-300 overflow-hidden ${
-              showSearch ? "w-64 opacity-100" : "w-0 opacity-0"
-            }`}
-          >
+    <div className="border-b border-slate-100 bg-white/80 backdrop-blur-md sticky top-0 z-10 px-6 py-4">
+      <div className="max-w-7xl mx-auto space-y-4">
+        {/* Top Row: Search and Quick Stats */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="relative group w-full">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-400 group-focus-within:text-brand-orange transition-colors" />
             <input
               type="text"
-              placeholder="Type to search..."
+              placeholder="Search problems, topics..."
               value={localSearch}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="w-64 rounded border px-3 py-2 text-sm outline-none"
-              autoFocus
+              className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-4 py-2.5 text-sm outline-none focus:border-brand-orange focus:ring-4 focus:ring-brand-orange/5 transition-all"
             />
           </div>
         </div>
 
-        <select
-          value={localCategory}
-          onChange={(e) => onCategoryChange(e.target.value as ProblemCategory)}
-          className="p-2 text-sm text-gray-700 outline-none"
-          style={{ background: "transparent" }}
-        >
-          {CATEGORIES.map((cat) => (
-            <option key={cat.value} value={cat.value} className="bg-white">
-              {cat.label}
-            </option>
-          ))}
-        </select>
+        {/* Bottom Row: Categories and Sorting */}
+        <div className="flex flex-wrap items-center gap-6">
+          {/* Categories */}
+          <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-xl">
+            {CATEGORIES.slice(0, 5).map((cat) => (
+              <button
+                key={cat.value}
+                onClick={() => onCategoryChange(cat.value as ProblemCategory)}
+                className={cn(
+                  "px-4 py-1.5 rounded-lg text-xs font-bold transition-all",
+                  localCategory === cat.value 
+                    ? "bg-white text-slate-900 shadow-sm" 
+                    : "text-slate-500 hover:text-slate-700"
+                )}
+              >
+                {cat.label}
+              </button>
+            ))}
+          </div>
 
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-gray-500">Difficulty:</span>
-          {(["Easy", "Medium", "Hard"] as const).map((diff) => (
-            <button
-              key={diff}
-              onClick={() => onDifficultyChange(diff)}
-              className={`px-2 py-0.5 text-xs ${
-                localDifficulty === diff ? "font-bold" : ""
-              }`}
-              style={{ background: "transparent" }}
-            >
-              {diff}
-            </button>
-          ))}
-        </div>
+          <div className="h-6 w-px bg-slate-200" />
 
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-gray-500">Sort:</span>
-          {(["default", "difficulty", "acceptance"] as const).map((opt) => (
-            <button
-              key={opt}
-              onClick={() => onSortToggle(opt)}
-              className="px-2 py-0.5 text-xs"
-              style={{ background: "transparent" }}
-            >
-              {opt} {sortBy === opt && (sortDirection === "asc" ? "↑" : "↓")}
-            </button>
-          ))}
+          {/* Difficulty Toggles */}
+          <div className="flex items-center gap-2">
+            {(["Easy", "Medium", "Hard"] as const).map((diff) => (
+              <button
+                key={diff}
+                onClick={() => onDifficultyChange(diff)}
+                className={cn(
+                  "px-3 py-1.5 rounded-lg text-xs font-bold border transition-all",
+                  localDifficulty === diff 
+                    ? "bg-slate-900 border-slate-900 text-white" 
+                    : "border-slate-200 text-slate-500 hover:border-slate-400"
+                )}
+              >
+                {diff}
+              </button>
+            ))}
+          </div>
+
+          <div className="h-6 w-px bg-slate-200" />
+
+          {/* Sort Menu */}
+          <div className="flex items-center gap-3">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Sort by</span>
+            <div className="flex items-center gap-1">
+              {(["difficulty", "acceptance"] as const).map((opt) => (
+                <button
+                  key={opt}
+                  onClick={() => onSortToggle(opt)}
+                  className={cn(
+                    "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all",
+                    sortBy === opt 
+                      ? "bg-brand-orange/10 text-brand-orange" 
+                      : "text-slate-500 hover:bg-slate-100"
+                  )}
+                >
+                  {opt.charAt(0).toUpperCase() + opt.slice(1)}
+                  {sortBy === opt && (
+                    <ArrowUpDown className={cn("size-3 transition-transform", sortDirection === "desc" && "rotate-180")} />
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>
