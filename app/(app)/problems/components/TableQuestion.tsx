@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import { Check, Lock, Play } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import StatCard from "@/components/common/StatCard";
 
 type TableQuestionProps = {
   problems: DBProblem[];
@@ -62,6 +63,30 @@ export default function TableQuestion({
 
   return (
     <div className="w-full max-w-7xl mx-auto px-6 py-8">
+      {isAuthenticated ? (
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          <StatCard
+            title="Total Problems"
+            value={totalCount.toString()}
+            subtitle="Curated for you"
+            color="bg-blue-500"
+          />
+          <StatCard
+            title="Solved"
+            value={(userStats?.solvedCount ?? solvedCount).toString()}
+            subtitle={`${totalCount > 0 ? Math.round(((userStats?.solvedCount ?? solvedCount) / totalCount) * 100) : 0}% Completion`}
+            color="bg-emerald-500"
+          />
+          <StatCard
+            title="Current Streak"
+            value={`${userStats?.streakDays ?? 0} Days`}
+            subtitle="Keep it up!"
+            color="bg-orange-500"
+          />
+        </div>
+      ) : (
+        <></>
+      )}
       {/* Table Section */}
       <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-xl shadow-slate-200/50">
         <Table>
@@ -74,9 +99,6 @@ export default function TableQuestion({
                 Title
               </TableHead>
               <TableHead className="w-40 h-12 text-[11px] font-bold uppercase tracking-wider text-slate-400 text-center">
-                Solution
-              </TableHead>
-              <TableHead className="w-40 h-12 text-[11px] font-bold uppercase tracking-wider text-slate-400 text-center">
                 Acceptance
               </TableHead>
               <TableHead className="w-32 h-12 text-[11px] font-bold uppercase tracking-wider text-slate-400 text-right pr-8">
@@ -87,7 +109,7 @@ export default function TableQuestion({
           <TableBody>
             {problems.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="h-64 text-center">
+                <TableCell colSpan={4} className="h-64 text-center">
                   <div className="flex flex-col items-center justify-center gap-2 text-slate-400">
                     <div className="p-4 rounded-full bg-slate-50">
                       <Lock className="size-8" />
@@ -133,18 +155,6 @@ export default function TableQuestion({
                         </span>
                       </div>
                     </TableCell>
-
-                    <TableCell className="py-4 text-center">
-                      <div className="flex justify-center">
-                        <Badge
-                          variant="outline"
-                          className="bg-white text-slate-400 border-slate-200 font-medium hover:border-brand-orange hover:text-brand-orange transition-colors"
-                        >
-                          Video
-                        </Badge>
-                      </div>
-                    </TableCell>
-
                     <TableCell className="py-4">
                       <div className="flex flex-col items-center gap-1.5">
                         <div className="h-1.5 w-24 overflow-hidden rounded-full bg-slate-100">
@@ -175,59 +185,6 @@ export default function TableQuestion({
             )}
           </TableBody>
         </Table>
-      </div>
-
-      {/* Stats Footer */}
-      {isAuthenticated ? (
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <StatCard
-            title="Total Problems"
-            value={totalCount.toString()}
-            subtitle="Curated for you"
-            color="bg-blue-500"
-          />
-          <StatCard
-            title="Solved"
-            value={(userStats?.solvedCount ?? solvedCount).toString()}
-            subtitle={`${totalCount > 0 ? Math.round(((userStats?.solvedCount ?? solvedCount) / totalCount) * 100) : 0}% Completion`}
-            color="bg-emerald-500"
-          />
-          <StatCard
-            title="Current Streak"
-            value={`${userStats?.streakDays ?? 0} Days`}
-            subtitle="Keep it up!"
-            color="bg-orange-500"
-          />
-        </div>
-      ) : (
-        <></>
-      )}
-    </div>
-  );
-}
-
-function StatCard({
-  title,
-  value,
-  subtitle,
-  color,
-}: {
-  title: string;
-  value: string;
-  subtitle: string;
-  color: string;
-}) {
-  return (
-    <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-xl shadow-slate-200/40">
-      <div className="flex items-center gap-4">
-        <div className={cn("size-2 rounded-full animate-pulse", color)} />
-        <span className="text-xs font-bold uppercase tracking-widest text-slate-400">
-          {title}
-        </span>
-      </div>
-      <div className="mt-2 flex items-baseline gap-2">
-        <span className="text-3xl font-bold text-slate-900">{value}</span>
-        <span className="text-xs font-medium text-slate-500">{subtitle}</span>
       </div>
     </div>
   );

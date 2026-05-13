@@ -86,8 +86,11 @@ export function useAuth() {
   const logout = useCallback(async () => {
     try {
       await logoutApi();
-    } catch (e) {
-      console.error("Logout error:", e);
+    } catch (e: any) {
+      // If 401, we're already unauthorized, so we can ignore it
+      if (e.response?.status !== 401) {
+        console.error("Logout error:", e);
+      }
     } finally {
       clearPersistedAuthSession();
       setAuthUser(null);

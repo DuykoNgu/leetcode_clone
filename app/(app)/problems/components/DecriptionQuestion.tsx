@@ -46,7 +46,7 @@ export default function DecriptionQuestion({
               {difficulty}
             </span>
           </div>
-          
+
           <div className="flex items-center gap-4 text-xs font-medium text-slate-400">
             <div className="flex items-center gap-1.5">
               <BookOpenText className="size-3.5" />
@@ -61,12 +61,27 @@ export default function DecriptionQuestion({
 
         {/* Description Section */}
         <section className="prose prose-slate prose-sm max-w-none">
-          <div className="space-y-4 text-[15px] leading-relaxed text-slate-600">
-            {description.split("\n\n").map((paragraph, i) => (
-              <p key={i}>{paragraph}</p>
-            ))}
-          </div>
+          <div
+            className="space-y-4 text-[15px] leading-relaxed text-slate-600 html-content"
+            dangerouslySetInnerHTML={{ __html: description }}
+          />
         </section>
+
+        {constraints.length > 0 && (
+          <section className="rounded-2xl border border-slate-100 bg-slate-50/30 p-5">
+            <h2 className="mb-4 text-sm font-bold uppercase tracking-wider text-slate-900">Constraints</h2>
+            <ul className="space-y-2.5">
+              {constraints.map((constraint, i) => (
+                <li key={i} className="flex items-start gap-3">
+                  <Circle className="mt-1.5 size-1.5 fill-brand-orange text-brand-orange" />
+                  <code className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[13px] text-slate-700">
+                    {constraint}
+                  </code>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         {/* Examples Section */}
         <section className="space-y-4">
@@ -92,33 +107,15 @@ export default function DecriptionQuestion({
                       {example.output}
                     </code>
                   </div>
-                  {example.explanation && (
-                    <div className="mt-2 rounded-lg border-l-4 border-amber-200 bg-amber-50/50 p-3 text-[13px] text-slate-600">
-                      <span className="font-bold text-amber-700">Explanation:</span> {example.explanation}
-                    </div>
-                  )}
+                  <div className="mt-2 rounded-lg border-l-4 border-amber-200 bg-amber-50/50 p-3 text-[13px] text-slate-600">
+                    <span className="font-bold text-amber-700">Explanation:</span> {example.explanation || ""}
+                  </div>
+
                 </div>
               </article>
             ))}
           </div>
         </section>
-
-        {/* Constraints Section */}
-        {constraints.length > 0 && (
-          <section className="rounded-2xl border border-slate-100 bg-slate-50/30 p-5">
-            <h2 className="mb-4 text-sm font-bold uppercase tracking-wider text-slate-900">Constraints</h2>
-            <ul className="space-y-2.5">
-              {constraints.map((constraint, i) => (
-                <li key={i} className="flex items-start gap-3">
-                  <Circle className="mt-1.5 size-1.5 fill-brand-orange text-brand-orange" />
-                  <code className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[13px] text-slate-700">
-                    {constraint}
-                  </code>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
       </div>
     </aside>
   );

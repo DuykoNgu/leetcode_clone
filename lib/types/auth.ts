@@ -8,6 +8,16 @@ export type AuthUser = {
   solvedCount?: number;
   streakDays?: number;
   lastActive?: string | null;
+  difficultyStats?: {
+    Easy: { solved: number; total: number };
+    Medium: { solved: number; total: number };
+    Hard: { solved: number; total: number };
+  };
+  submissions?: { submittedAt: string; status: string }[];
+  recentAC?: {
+    problem: { title: string; slug: string };
+    submittedAt: string;
+  }[];
 };
 
 export type AuthSuccessResponse = {
