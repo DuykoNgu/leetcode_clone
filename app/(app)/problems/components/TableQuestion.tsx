@@ -66,21 +66,21 @@ export default function TableQuestion({
       {isAuthenticated ? (
         <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
           <StatCard
-            title="Total Problems"
+            title="Tổng số bài tập"
             value={totalCount.toString()}
-            subtitle="Curated for you"
+            subtitle="Dành riêng cho bạn"
             color="bg-blue-500"
           />
           <StatCard
-            title="Solved"
+            title="Đã giải"
             value={(userStats?.solvedCount ?? solvedCount).toString()}
-            subtitle={`${totalCount > 0 ? Math.round(((userStats?.solvedCount ?? solvedCount) / totalCount) * 100) : 0}% Completion`}
+            subtitle={`Hoàn thành ${totalCount > 0 ? Math.round(((userStats?.solvedCount ?? solvedCount) / totalCount) * 100) : 0}%`}
             color="bg-emerald-500"
           />
           <StatCard
-            title="Current Streak"
-            value={`${userStats?.streakDays ?? 0} Days`}
-            subtitle="Keep it up!"
+            title="Chuỗi ngày học"
+            value={`${userStats?.streakDays ?? 0} Ngày`}
+            subtitle="Tiếp tục phát huy!"
             color="bg-orange-500"
           />
         </div>
@@ -93,16 +93,16 @@ export default function TableQuestion({
           <TableHeader>
             <TableRow className="hover:bg-transparent border-b border-slate-100 bg-slate-50/50">
               <TableHead className="w-16 h-12 text-[11px] font-bold uppercase tracking-wider text-slate-400 pl-6">
-                Status
+                Trạng thái
               </TableHead>
               <TableHead className="h-12 text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                Title
+                Tiêu đề
               </TableHead>
               <TableHead className="w-40 h-12 text-[11px] font-bold uppercase tracking-wider text-slate-400 text-center">
-                Acceptance
+                Tỷ lệ giải
               </TableHead>
               <TableHead className="w-32 h-12 text-[11px] font-bold uppercase tracking-wider text-slate-400 text-right pr-8">
-                Difficulty
+                Độ khó
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -115,7 +115,7 @@ export default function TableQuestion({
                       <Lock className="size-8" />
                     </div>
                     <p className="text-sm font-medium">
-                      No problems match your filters
+                      Không tìm thấy bài tập nào phù hợp
                     </p>
                   </div>
                 </TableCell>
@@ -151,7 +151,7 @@ export default function TableQuestion({
                           {index + 1}. {problem.title}
                         </span>
                         <span className="text-[11px] text-slate-400 font-medium">
-                          Algorithms • Array, Hash Table
+                          Thuật toán
                         </span>
                       </div>
                     </TableCell>
@@ -176,7 +176,7 @@ export default function TableQuestion({
                           difficultyStyles[problem.difficulty],
                         )}
                       >
-                        {problem.difficulty}
+                        {problem.difficulty === 'Easy' ? 'Dễ' : problem.difficulty === 'Medium' ? 'Trung bình' : 'Khó'}
                       </Badge>
                     </TableCell>
                   </TableRow>

@@ -17,7 +17,7 @@ export default function ProblemHeader({ title }: ProblemHeaderProps) {
           className="flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors"
         >
           <List className="size-4" />
-          Problem List
+          Danh sách bài tập
         </Link>
         <div className="h-4 w-px bg-gray-200" />
         <h1 className="text-sm font-semibold text-gray-900 truncate max-w-[300px]">

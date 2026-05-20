@@ -70,7 +70,7 @@ const Nav: React.FC = () => {
                 onClick={openLoginModal}
                 className="inline-flex bg-brand-orange text-white hover:bg-brand-orange/90"
               >
-                Sign In
+                Đăng nhập
               </Button>
               <Button
                 type="button"
@@ -78,7 +78,7 @@ const Nav: React.FC = () => {
                 variant="outline"
                 className="inline-flex border-brand-orange text-brand-orange hover:bg-brand-orange/10"
               >
-                Sign Up
+                Đăng ký
               </Button>
             </>
           )}

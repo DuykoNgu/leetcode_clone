@@ -21,6 +21,7 @@ export default function ProblemDetailPage({ params }: { params: Promise<{ id: st
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [code, setCode] = useState("");
+  const [language, setLanguage] = useState("javascript");
   const [activeTab, setActiveTab] = useState<Tab>("description");
 
   useEffect(() => {
@@ -37,9 +38,9 @@ export default function ProblemDetailPage({ params }: { params: Promise<{ id: st
         const data = await getProblemDetail(id);
         setProblem(data);
         
-        const jsTemplate = data.codeTemplates?.find(t => t.language === "javascript");
-        if (jsTemplate) {
-          setCode(jsTemplate.starterCode);
+        const template = data.codeTemplates?.find(t => t.language === language);
+        if (template) {
+          setCode(template.starterCode);
         }
       } catch (err) {
         console.error("Failed to fetch problem detail:", err);
@@ -57,7 +58,7 @@ export default function ProblemDetailPage({ params }: { params: Promise<{ id: st
       <div className="flex h-[calc(100vh-60px)] items-center justify-center bg-white">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="h-10 w-10 animate-spin text-brand-orange" />
-          <p className="text-sm font-medium text-slate-400 animate-pulse">Loading problem...</p>
+          <p className="text-sm font-medium text-slate-400 animate-pulse">Đang tải bài tập...</p>
         </div>
       </div>
     );
@@ -71,7 +72,7 @@ export default function ProblemDetailPage({ params }: { params: Promise<{ id: st
           onClick={() => router.push("/problems")}
           className="text-sm font-bold text-brand-orange hover:underline"
         >
-          Back to problem list
+          Quay lại danh sách bài tập
         </button>
       </div>
     );
@@ -96,53 +97,36 @@ export default function ProblemDetailPage({ params }: { params: Promise<{ id: st
               active={activeTab === "description"} 
               onClick={() => setActiveTab("description")}
               icon={<FileText className="size-3.5" />}
-              label="Description"
+              label="Mô tả"
             />
             <TabButton 
               active={activeTab === "editorial"} 
               onClick={() => setActiveTab("editorial")}
               icon={<MessageSquare className="size-3.5" />}
-              label="Editorial"
+              label="Lời giải"
             />
             <TabButton 
               active={activeTab === "submissions"} 
               onClick={() => setActiveTab("submissions")}
               icon={<History className="size-3.5" />}
-              label="Submissions"
+              label="Lịch sử nộp bài"
             />
           </div>
 
           {/* Tab Content */}
           <div className="flex-1 overflow-hidden">
-            {activeTab === "description" && (() => {
-              let parsedDescription = { des: problem.description, example: [], condition: [] };
-              try {
-                // Kiểm tra nếu description là chuỗi JSON
-                if (problem.description.startsWith("{") && problem.description.endsWith("}")) {
-                  const structured = JSON.parse(problem.description);
-                  parsedDescription = {
-                    des: structured.des || problem.description,
-                    example: structured.example || [],
-                    condition: structured.condition || []
-                  };
-                }
-              } catch (e) {
-                console.warn("Description is not a JSON string, using raw text.");
-              }
-
-              return (
-                <DecriptionQuestion
-                  title={problem.title}
-                  difficulty={difficultyMap[problem.difficulty] || "Medium"}
-                  description={parsedDescription.des}
-                  examples={parsedDescription.example.length > 0 ? parsedDescription.example : (problem.testCases?.map(tc => ({
-                    input: tc.input,
-                    output: tc.expectedOutput
-                  })) || [])}
-                  constraints={parsedDescription.condition} 
-                />
-              );
-            })()}
+            {activeTab === "description" && (
+              <DecriptionQuestion
+                title={problem.title}
+                difficulty={difficultyMap[problem.difficulty] || "Medium"}
+                description={problem.description}
+                examples={problem.examples?.length ? problem.examples : (problem.testCases?.map(tc => ({
+                  input: tc.input,
+                  output: tc.expectedOutput
+                })) || [])}
+                constraints={problem.constraints?.map(c => c.content) || []} 
+              />
+            )}
             {activeTab === "editorial" && <EditorialTab problem={problem} />}
             {activeTab === "submissions" && <SubmissionsTab problem={problem} />}
           </div>
@@ -154,7 +138,14 @@ export default function ProblemDetailPage({ params }: { params: Promise<{ id: st
           <CodeEditor 
             value={code} 
             onChange={setCode}
-            language="javascript" 
+            language={language}
+            onLanguageChange={(newLang) => {
+              setLanguage(newLang);
+              if (problem?.codeTemplates) {
+                const template = problem.codeTemplates.find(t => t.language === newLang);
+                setCode(template?.starterCode || "");
+              }
+            }}
           />
         </div>
       </main>

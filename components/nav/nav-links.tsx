@@ -5,10 +5,10 @@ import { motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const navLinks = [
-  { href: "/problems", label: "Problems" },
-  { href: "/discuss", label: "Discuss" },
-  { href: "/interview", label: "Interview" },
-  { href: "/contest", label: "Contest" },
+  { href: "/problems", label: "Bài tập" },
+  { href: "/discuss", label: "Thảo luận" },
+  { href: "/interview", label: "Phỏng vấn" },
+  { href: "/contest", label: "Thi đấu" },
 ];
 
 export function NavLinks({

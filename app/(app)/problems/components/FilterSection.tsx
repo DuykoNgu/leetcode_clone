@@ -52,7 +52,7 @@ export default function FilterSection({
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-400 group-focus-within:text-brand-orange transition-colors" />
             <input
               type="text"
-              placeholder="Search problems, topics..."
+              placeholder="Tìm kiếm bài tập, chủ đề..."
               value={localSearch}
               onChange={(e) => onSearchChange(e.target.value)}
               className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-4 py-2.5 text-sm outline-none focus:border-brand-orange focus:ring-4 focus:ring-brand-orange/5 transition-all"
@@ -95,7 +95,7 @@ export default function FilterSection({
                     : "border-slate-200 text-slate-500 hover:border-slate-400"
                 )}
               >
-                {diff}
+                {diff === "Easy" ? "Dễ" : diff === "Medium" ? "Trung bình" : "Khó"}
               </button>
             ))}
           </div>
@@ -104,7 +104,7 @@ export default function FilterSection({
 
           {/* Sort Menu */}
           <div className="flex items-center gap-3">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Sort by</span>
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Sắp xếp theo</span>
             <div className="flex items-center gap-1">
               {(["difficulty", "acceptance"] as const).map((opt) => (
                 <button
@@ -117,7 +117,7 @@ export default function FilterSection({
                       : "text-slate-500 hover:bg-slate-100"
                   )}
                 >
-                  {opt.charAt(0).toUpperCase() + opt.slice(1)}
+                  {opt === "difficulty" ? "Độ khó" : "Tỷ lệ giải"}
                   {sortBy === opt && (
                     <ArrowUpDown className={cn("size-3 transition-transform", sortDirection === "desc" && "rotate-180")} />
                   )}

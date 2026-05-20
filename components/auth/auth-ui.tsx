@@ -146,13 +146,13 @@ export function AuthFooter({
 export function AuthTermsLinks() {
   return (
     <>
-      I agree to the{" "}
+      Tôi đồng ý với{" "}
       <Link href="/terms" className="text-brand-orange hover:text-brand-orange/80">
-        Terms of Service
+        Điều khoản Dịch vụ
       </Link>{" "}
-      and{" "}
+      và{" "}
       <Link href="/privacy" className="text-brand-orange hover:text-brand-orange/80">
-        Privacy Policy
+        Chính sách Bảo mật
       </Link>
     </>
   );

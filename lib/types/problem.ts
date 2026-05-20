@@ -46,6 +46,20 @@ export type Submission = {
   submittedAt: string;
 };
 
+export type ProblemExample = {
+  id?: string;
+  input: string;
+  output: string;
+  explanation?: string;
+  orderIndex?: number;
+};
+
+export type ProblemConstraint = {
+  id?: string;
+  content: string;
+  orderIndex?: number;
+};
+
 export type ApiProblem = {
   id: string;
   title: string;
@@ -56,6 +70,8 @@ export type ApiProblem = {
   codeTemplates?: CodeTemplate[];
   testCases?: TestCase[];
   submissions?: Submission[];
+  examples?: ProblemExample[];
+  constraints?: ProblemConstraint[];
   isSolved?: boolean;
 };
 

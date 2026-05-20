@@ -1,6 +1,6 @@
 "use client";
 
-import { BookOpenText, ChevronRight, Circle, Info } from "lucide-react";
+import { BookOpenText, Circle, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type Example = {
@@ -43,18 +43,18 @@ export default function DecriptionQuestion({
                 difficultyStyles[difficulty]
               )}
             >
-              {difficulty}
+              {difficulty === 'Easy' ? 'Dễ' : difficulty === 'Medium' ? 'Trung bình' : 'Khó'}
             </span>
           </div>
 
           <div className="flex items-center gap-4 text-xs font-medium text-slate-400">
             <div className="flex items-center gap-1.5">
               <BookOpenText className="size-3.5" />
-              Algorithms
+              Thuật toán
             </div>
             <div className="flex items-center gap-1.5">
               <Info className="size-3.5" />
-              Success Rate: 48.5%
+              Tỷ lệ giải thành công: 48.5%
             </div>
           </div>
         </section>
@@ -69,7 +69,7 @@ export default function DecriptionQuestion({
 
         {constraints.length > 0 && (
           <section className="rounded-2xl border border-slate-100 bg-slate-50/30 p-5">
-            <h2 className="mb-4 text-sm font-bold uppercase tracking-wider text-slate-900">Constraints</h2>
+            <h2 className="mb-4 text-sm font-bold uppercase tracking-wider text-slate-900">Điều kiện (Constraints)</h2>
             <ul className="space-y-2.5">
               {constraints.map((constraint, i) => (
                 <li key={i} className="flex items-start gap-3">
@@ -87,28 +87,28 @@ export default function DecriptionQuestion({
         <section className="space-y-4">
           <div className="flex items-center gap-2">
             <div className="h-6 w-1 rounded-full bg-brand-orange" />
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">Examples</h2>
+            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">Ví dụ (Examples)</h2>
           </div>
 
           <div className="space-y-6">
             {examples.map((example, index) => (
               <article key={index} className="group relative rounded-2xl border border-slate-100 bg-slate-50/50 p-5 transition-all hover:bg-white hover:shadow-md">
-                <h3 className="mb-4 text-xs font-bold uppercase tracking-widest text-slate-400">Example {index + 1}</h3>
+                <h3 className="mb-4 text-xs font-bold uppercase tracking-widest text-slate-400">Ví dụ {index + 1}</h3>
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 gap-2">
-                    <span className="text-[10px] font-bold uppercase tracking-tight text-slate-400">Input</span>
+                    <span className="text-[10px] font-bold uppercase tracking-tight text-slate-400">Đầu vào (Input)</span>
                     <code className="rounded-lg bg-slate-900 px-4 py-3 font-mono text-[13px] text-emerald-400 shadow-inner">
                       {example.input}
                     </code>
                   </div>
                   <div className="grid grid-cols-1 gap-2">
-                    <span className="text-[10px] font-bold uppercase tracking-tight text-slate-400">Output</span>
+                    <span className="text-[10px] font-bold uppercase tracking-tight text-slate-400">Đầu ra (Output)</span>
                     <code className="rounded-lg bg-slate-800 px-4 py-3 font-mono text-[13px] text-amber-400 shadow-inner">
                       {example.output}
                     </code>
                   </div>
                   <div className="mt-2 rounded-lg border-l-4 border-amber-200 bg-amber-50/50 p-3 text-[13px] text-slate-600">
-                    <span className="font-bold text-amber-700">Explanation:</span> {example.explanation || ""}
+                    <span className="font-bold text-amber-700">Giải thích:</span> {example.explanation || ""}
                   </div>
 
                 </div>

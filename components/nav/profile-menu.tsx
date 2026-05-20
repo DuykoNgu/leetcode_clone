@@ -82,7 +82,7 @@ export function ProfileMenu({ user, onLogout }: { user: any; onLogout: () => voi
               onClick={() => setIsOpen(false)}
               className="block rounded px-3 py-2 text-sm font-semibold text-brand-orange transition-colors hover:bg-orange-50"
             >
-              Admin Dashboard
+              Quản trị viên
             </Link>
           )}
           <Link
@@ -91,7 +91,7 @@ export function ProfileMenu({ user, onLogout }: { user: any; onLogout: () => voi
             onClick={() => setIsOpen(false)}
             className="block rounded px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-100"
           >
-            Profile
+            Hồ sơ cá nhân
           </Link>
           <button
             type="button"
@@ -99,7 +99,7 @@ export function ProfileMenu({ user, onLogout }: { user: any; onLogout: () => voi
             onClick={onLogout}
             className="block w-full rounded px-3 py-2 text-left text-sm text-red-600 transition-colors hover:bg-red-50"
           >
-            Logout
+            Đăng xuất
           </button>
         </div>
       ) : null}
