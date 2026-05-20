@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition, useState } from "react";
+import { useTransition, useState, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,7 +20,8 @@ type RegisterPayload = { username: string; email: string; password: string; conf
 export function AuthForm({ mode }: { mode: AuthMode }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { login, register } = useAuth();
+  const { login, adminLogin, register } = useAuth();
+  const formRef = useRef<HTMLFormElement>(null);
   const [isPending, startSubmitTransition] = useTransition();
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -62,6 +63,31 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
     });
   };
 
+  const handleAdminLogin = () => {
+    if (!formRef.current) return;
+    const formData = new FormData(formRef.current);
+    const email = String(formData.get("email") || "").trim();
+    const password = String(formData.get("password") || "");
+
+    if (!email || !password) {
+      setErrorMessage("Please enter both email and password");
+      return;
+    }
+
+    startSubmitTransition(async () => {
+      setErrorMessage("");
+      setSuccessMessage("");
+
+      try {
+        await adminLogin({ email, password } as LoginPayload);
+        setSuccessMessage("Admin login successful");
+        router.replace("/admin");
+      } catch (error) {
+        setErrorMessage(error instanceof Error ? error.message : "Admin login failed");
+      }
+    });
+  };
+
   return (
     <>
       <AuthHeader
@@ -69,7 +95,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
         description={isLogin ? "Access your LeetCode workspace" : "Join LeetCode today"}
       />
 
-      <form action={handleSubmit} className="space-y-3">
+      <form ref={formRef} action={handleSubmit} className="space-y-3">
         <fieldset disabled={isPending} className="space-y-3">
           {errorMessage ? <AuthStatus type="error" message={errorMessage} /> : null}
           {successMessage ? <AuthStatus type="success" message={successMessage} /> : null}
@@ -153,13 +179,27 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
             }
           />
 
-          <Button
-            type="submit"
-            disabled={isPending}
-            className="w-full bg-brand-orange py-2.5 text-sm text-white hover:bg-brand-orange/90"
-          >
-            {isPending ? (isLogin ? "Signing In..." : "Creating Account...") : isLogin ? "Sign In" : "Sign Up"}
-          </Button>
+          <div className="flex flex-col gap-2">
+            <Button
+              type="submit"
+              disabled={isPending}
+              className="w-full bg-brand-orange py-2.5 text-sm text-white hover:bg-brand-orange/90"
+            >
+              {isPending ? (isLogin ? "Signing In..." : "Creating Account...") : isLogin ? "Sign In" : "Sign Up"}
+            </Button>
+
+            {isLogin && (
+              <Button
+                type="button"
+                variant="outline"
+                disabled={isPending}
+                onClick={handleAdminLogin}
+                className="w-full border-brand-orange text-brand-orange hover:bg-brand-orange/5"
+              >
+                Login as Administrator
+              </Button>
+            )}
+          </div>
         </fieldset>
       </form>
 

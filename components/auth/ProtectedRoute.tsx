@@ -1,0 +1,52 @@
+"use client";
+
+import { useAuth } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
+import { useEffect, ReactNode } from "react";
+import { toast } from "sonner";
+
+interface ProtectedRouteProps {
+  children: ReactNode;
+  role?: "admin" | "user";
+  redirectTo?: string;
+}
+
+export default function ProtectedRoute({
+  children,
+  role,
+  redirectTo = "/",
+}: ProtectedRouteProps) {
+  const { authUser, isLoading, isAuthenticated } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isLoading) return;
+
+    if (!isAuthenticated) {
+      toast.error("Vui lòng đăng nhập để tiếp tục");
+      router.replace(redirectTo);
+      return;
+    }
+
+    if (role && authUser?.role !== role) {
+      toast.error("Bạn không có quyền truy cập trang này");
+      router.replace(role === "admin" ? "/problems" : "/");
+      return;
+    }
+  }, [isLoading, isAuthenticated, authUser, role, router, redirectTo]);
+
+  if (isLoading) {
+    return (
+      <div className="h-screen flex items-center justify-center text-sm text-gray-500">
+        Đang tải...
+      </div>
+    );
+  }
+
+  // If not authenticated or wrong role, show nothing (redirect will happen in useEffect)
+  if (!isAuthenticated || (role && authUser?.role !== role)) {
+    return null;
+  }
+
+  return <>{children}</>;
+}

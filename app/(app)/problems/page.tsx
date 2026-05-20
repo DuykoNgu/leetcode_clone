@@ -1,11 +1,12 @@
-"use client";
-
+import { Suspense } from "react";
 import ListQuestion from "./components/ListQuestion";
 
 const ProblemPage = () => {
   return (
     <div>
-      <ListQuestion />
+      <Suspense fallback={<div>Loading problems...</div>}>
+        <ListQuestion />
+      </Suspense>
     </div>
   );
 };

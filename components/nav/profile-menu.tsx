@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { useRef, useState } from "react";
 
-export function ProfileMenu({ onLogout }: { onLogout: () => void }) {
+export function ProfileMenu({ user, onLogout }: { user: any; onLogout: () => void }) {
   const [isOpen, setIsOpen] = useState(false);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const isAdmin = user?.role === "admin";
 
   const openMenu = () => {
     if (closeTimerRef.current) {
@@ -71,8 +73,18 @@ export function ProfileMenu({ onLogout }: { onLogout: () => void }) {
       {isOpen ? (
         <div
           role="menu"
-          className="absolute right-0 top-full z-50 mt-1 w-36 rounded-md border border-gray-200 bg-white p-1 shadow-md"
+          className="absolute right-0 top-full z-50 mt-1 w-40 rounded-md border border-gray-200 bg-white p-1 shadow-md"
         >
+          {isAdmin && (
+            <Link
+              href="/admin"
+              role="menuitem"
+              onClick={() => setIsOpen(false)}
+              className="block rounded px-3 py-2 text-sm font-semibold text-brand-orange transition-colors hover:bg-orange-50"
+            >
+              Admin Dashboard
+            </Link>
+          )}
           <Link
             href="/profile"
             role="menuitem"

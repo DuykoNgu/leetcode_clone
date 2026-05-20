@@ -62,7 +62,7 @@ const Nav: React.FC = () => {
           {isLoading ? (
             <div className="h-9 w-9 animate-pulse rounded-full bg-gray-200" />
           ) : authUser ? (
-            <ProfileMenu onLogout={handleLogout} />
+            <ProfileMenu user={authUser} onLogout={handleLogout} />
           ) : (
             <>
               <Button

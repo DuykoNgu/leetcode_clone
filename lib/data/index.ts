@@ -1,1 +1,2 @@
-export { MOCK_PROBLEMS, CATEGORIES } from "./mock-problems";
+// Data utilities
+export {};

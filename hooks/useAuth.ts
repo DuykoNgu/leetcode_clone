@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "sonner";
 import {
   register as registerApi,
   login as loginApi,
@@ -13,6 +14,7 @@ import {
   getPersistedRefreshToken,
   refreshToken as refreshTokenApi,
   persistTokenSession,
+  adminLogin as adminLoginApi,
 } from "@/lib/api/auth";
 import type { AuthUser, RegisterPayload, LoginPayload } from "@/lib/types";
 
@@ -71,14 +73,29 @@ export function useAuth() {
   // Login
   const login = useCallback(async (payload: LoginPayload) => {
     const res = await loginApi(payload);
-    persistAuthSession(res.data.data);
+    const data = res.data.data;
+    persistAuthSession(data);
+    setAuthUser(data.user);
     window.dispatchEvent(new Event("storage"));
-    return res.data.data;
+    toast.success("Đăng nhập thành công");
+    return data;
+  }, []);
+
+  // Admin Login
+  const adminLogin = useCallback(async (payload: LoginPayload) => {
+    const res = await adminLoginApi(payload);
+    const data = res.data.data;
+    persistAuthSession(data);
+    setAuthUser(data.user);
+    window.dispatchEvent(new Event("storage"));
+    toast.success("Đăng nhập Admin thành công");
+    return data;
   }, []);
 
   // Register
   const register = useCallback(async (payload: RegisterPayload) => {
     const res = await registerApi(payload);
+    toast.success("Đăng ký thành công! Vui lòng đăng nhập.");
     return res.data.data;
   }, []);
 
@@ -87,7 +104,6 @@ export function useAuth() {
     try {
       await logoutApi();
     } catch (e: any) {
-      // If 401, we're already unauthorized, so we can ignore it
       if (e.response?.status !== 401) {
         console.error("Logout error:", e);
       }
@@ -95,6 +111,7 @@ export function useAuth() {
       clearPersistedAuthSession();
       setAuthUser(null);
       window.dispatchEvent(new Event("storage"));
+      toast.info("Đã đăng xuất");
       router.push("/");
     }
   }, [router]);
@@ -116,6 +133,7 @@ export function useAuth() {
     showAuthModal,
     authMode,
     login,
+    adminLogin,
     register,
     logout,
     refreshUser,
