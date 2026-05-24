@@ -12,7 +12,9 @@ export default function AppLayout({
       <Suspense fallback={<div className="h-[60px] w-full" />}>
         <Nav />
       </Suspense>
-      {children}
+      <Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-gray-500">Đang tải...</div>}>
+        {children}
+      </Suspense>
       <Toaster richColors position="top-center" />
     </>
   );

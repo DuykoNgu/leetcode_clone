@@ -49,3 +49,21 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Khắc phục lỗi ngốn RAM & Treo máy (RAM Leak/Out of Memory) trên Windows
+
+Nếu gặp hiện tượng chạy dự án Frontend (`npm run dev`) bị **ăn RAM nghiêm trọng** hoặc **sập terminal ngay lập tức**, nguyên nhân là do công cụ Turbopack mặc định của Next.js 16 gặp lỗi tương thích/rò rỉ bộ nhớ trên Windows kết hợp với việc thiếu `<Suspense>` boundary khi dùng `useSearchParams()`.
+
+### 1. Lệnh xóa cache triệt để (khi bị lỗi hoặc biên dịch treo)
+
+Chạy lệnh sau trong PowerShell tại thư mục `leetcode_fe` để xóa sạch cache biên dịch cũ:
+```powershell
+Remove-Item -Path .next, node_modules/.cache -Recurse -Force -ErrorAction SilentlyContinue
+```
+*(Đối với Git Bash hoặc Linux/macOS: `rm -rf .next node_modules/.cache`)*
+
+### 2. Các thay đổi đã thực hiện để khắc phục
+- **Sử dụng Webpack thay thế Turbopack:** Các câu lệnh `dev` và `build` trong [package.json](file:///d:/LeetCode/leetcode_fe/package.json) đã được cập nhật thêm flag `--webpack`:
+  - `npm run dev` chạy `next dev --webpack`
+  - `npm run build` chạy `next build --webpack`
+- **Bổ sung Suspense Boundaries:** Toàn bộ component sử dụng `useSearchParams` (trực tiếp hoặc gián tiếp qua `useAuth`) đã được bao bọc trong thẻ `<Suspense>` tại [layout.tsx](file:///d:/LeetCode/leetcode_fe/app/(app)/layout.tsx) và [page.tsx](file:///d:/LeetCode/leetcode_fe/app/admin/page.tsx) để tránh lỗi hydration bailout và lỗi build.

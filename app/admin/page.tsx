@@ -4,14 +4,14 @@ import ProtectedRoute from "@/components/auth/ProtectedRoute";
 
 export default function AdminPage() {
     return (
-        <ProtectedRoute role="admin">
-            <Suspense fallback={
-                <div className="h-screen flex items-center justify-center text-sm text-gray-400">
-                    Loading Dashboard...
-                </div>
-            }>
+        <Suspense fallback={
+            <div className="h-screen flex items-center justify-center text-sm text-gray-400">
+                Loading Dashboard...
+            </div>
+        }>
+            <ProtectedRoute role="admin">
                 <AdminDashboard />
-            </Suspense>
-        </ProtectedRoute>
+            </ProtectedRoute>
+        </Suspense>
     );
 }
