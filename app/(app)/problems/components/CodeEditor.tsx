@@ -1,10 +1,11 @@
 "use client";
 
 import Editor from "@monaco-editor/react";
-import { Check, Play, ChevronUp, Terminal, RotateCcw } from "lucide-react";
+import { Check, Play, ChevronUp, Terminal, RotateCcw, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import type { ExecuteResult } from "@/lib/api/problems";
 
 type CodeEditorProps = {
   value: string;
@@ -12,6 +13,13 @@ type CodeEditorProps = {
   language?: string;
   onLanguageChange?: (language: string) => void;
   height?: string;
+  onRun?: () => void;
+  onSubmit?: () => void;
+  isRunning?: boolean;
+  isSubmitting?: boolean;
+  runResult?: ExecuteResult | null;
+  showConsole?: boolean;
+  setShowConsole?: (show: boolean) => void;
 };
 
 const editorOptions = {
@@ -39,10 +47,27 @@ export default function CodeEditor({
   language = "javascript",
   onLanguageChange,
   height = "100%",
+  onRun,
+  onSubmit,
+  isRunning = false,
+  isSubmitting = false,
+  runResult = null,
+  showConsole,
+  setShowConsole,
 }: CodeEditorProps) {
   const [localLanguage, setLocalLanguage] = useState(language);
   const currentLanguage = onLanguageChange ? language : localLanguage;
-  const [showConsole, setShowConsole] = useState(false);
+  const [localShowConsole, setLocalShowConsole] = useState(false);
+
+  const isConsoleOpen = showConsole !== undefined ? showConsole : localShowConsole;
+
+  const toggleConsole = () => {
+    if (setShowConsole) {
+      setShowConsole(!isConsoleOpen);
+    } else {
+      setLocalShowConsole(!isConsoleOpen);
+    }
+  };
 
   const handleLanguageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const newLang = event.target.value;
@@ -78,17 +103,29 @@ export default function CodeEditor({
           <Button
             type="button"
             size="sm"
-            className="h-8 bg-slate-800 px-4 text-xs font-bold text-white hover:bg-slate-700 active:scale-95 transition-all"
+            onClick={onRun}
+            disabled={isRunning || isSubmitting}
+            className="h-8 bg-slate-800 px-4 text-xs font-bold text-white hover:bg-slate-700 active:scale-95 transition-all disabled:opacity-60"
           >
-            <Play className="mr-2 size-3.5 fill-white" />
+            {isRunning ? (
+              <Loader2 className="mr-2 size-3.5 animate-spin" />
+            ) : (
+              <Play className="mr-2 size-3.5 fill-white" />
+            )}
             Chạy Code
           </Button>
           <Button
             type="button"
             size="sm"
-            className="h-8 bg-brand-orange px-4 text-xs font-bold text-white hover:bg-brand-orange/90 active:scale-95 transition-all"
+            onClick={onSubmit}
+            disabled={isRunning || isSubmitting}
+            className="h-8 bg-brand-orange px-4 text-xs font-bold text-white hover:bg-brand-orange/90 active:scale-95 transition-all disabled:opacity-60"
           >
-            <Check className="mr-2 size-3.5 stroke-[3]" />
+            {isSubmitting ? (
+              <Loader2 className="mr-2 size-3.5 animate-spin" />
+            ) : (
+              <Check className="mr-2 size-3.5 stroke-[3]" />
+            )}
             Nộp bài
           </Button>
         </div>
@@ -109,27 +146,68 @@ export default function CodeEditor({
 
       {/* Console Drawer */}
       <div className={cn(
-        "border-t border-slate-200 bg-white transition-all duration-300",
-        showConsole ? "h-48" : "h-10"
+        "border-t border-slate-200 bg-slate-950 transition-all duration-300 flex flex-col min-h-0",
+        isConsoleOpen ? "h-64" : "h-10"
       )}>
         <button 
-          onClick={() => setShowConsole(!showConsole)}
-          className="flex w-full items-center justify-between px-4 py-2 text-slate-500 hover:bg-slate-50"
+          onClick={toggleConsole}
+          className="flex w-full items-center justify-between px-4 py-2.5 text-slate-400 hover:bg-slate-900 border-b border-slate-800 bg-slate-950"
         >
           <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider">
             <Terminal className="size-3.5 text-brand-orange" />
             Bảng điều khiển
           </div>
-          <ChevronUp className={cn("size-4 transition-transform", showConsole && "rotate-180")} />
+          <ChevronUp className={cn("size-4 transition-transform text-slate-400", isConsoleOpen && "rotate-180")} />
         </button>
         
-        {showConsole && (
-          <div className="p-4 font-mono text-[13px] text-slate-600">
-            <div className="flex items-center gap-2 text-emerald-600 mb-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-              Trạng thái: Sẵn sàng
-            </div>
-            <p className="text-slate-400 italic">Kết quả sẽ được hiển thị ở đây sau khi chạy code...</p>
+        {isConsoleOpen && (
+          <div className="p-4 font-mono text-[13px] text-slate-300 flex-1 overflow-y-auto">
+            {isRunning || isSubmitting ? (
+              <div className="flex items-center gap-2 text-slate-400">
+                <Loader2 className="h-4 w-4 animate-spin text-brand-orange" />
+                <span>Đang chấm điểm trên môi trường sandbox docker...</span>
+              </div>
+            ) : runResult ? (
+              <div className="space-y-3">
+                {/* Status and Summary */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-slate-400 text-xs">Trạng thái:</span>
+                    <span className={cn(
+                      "px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider",
+                      runResult.success 
+                        ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/25" 
+                        : "bg-rose-500/10 text-rose-400 border border-rose-500/25"
+                    )}>
+                      {runResult.status.replace("_", " ")}
+                    </span>
+                  </div>
+                  <div className="text-slate-400 text-xs">
+                    Testcases đã qua: <span className={runResult.success ? "text-emerald-400 font-bold" : "text-rose-400 font-bold"}>{runResult.passed}</span> / {runResult.total}
+                  </div>
+                </div>
+
+                {/* Error/Output Message */}
+                {runResult.message && (
+                  <div className="space-y-1">
+                    <div className="text-[11px] text-slate-500 font-bold uppercase tracking-wider">Kết quả chi tiết / Nhật ký lỗi:</div>
+                    <pre className="p-3 bg-slate-900 border border-slate-800 rounded-lg text-slate-300 text-xs overflow-x-auto whitespace-pre-wrap font-mono leading-relaxed max-h-36">
+                      {runResult.message}
+                    </pre>
+                  </div>
+                )}
+
+                {/* Success Message */}
+                {runResult.success && !runResult.message && (
+                  <div className="text-emerald-400 flex items-center gap-1.5 text-xs bg-emerald-500/5 p-3 rounded-lg border border-emerald-500/10">
+                    <Check className="size-4 text-emerald-500" />
+                    <span>Chúc mừng! Tất cả các trường hợp kiểm thử (testcases) đã chạy thành công.</span>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <p className="text-slate-500 italic text-xs">Kết quả chạy thử và biên dịch sẽ hiển thị ở đây...</p>
+            )}
           </div>
         )}
       </div>

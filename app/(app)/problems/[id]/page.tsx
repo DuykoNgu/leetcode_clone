@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, use } from "react";
-import { getProblemDetail } from "@/lib/api/problems";
+import { getProblemDetail, runCode, ExecuteResult } from "@/lib/api/problems";
 import { ApiProblem } from "@/lib/types";
 import DecriptionQuestion from "../components/DecriptionQuestion";
 import CodeEditor from "../components/CodeEditor";
@@ -10,6 +10,7 @@ import { Loader2, MessageSquare, History, FileText } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { EditorialTab, SubmissionsTab, TabButton } from "../../../../components/common/TabButton";
+import { toast } from "sonner";
 
 type Tab = "description" | "editorial" | "submissions";
 
@@ -23,6 +24,10 @@ export default function ProblemDetailPage({ params }: { params: Promise<{ id: st
   const [code, setCode] = useState("");
   const [language, setLanguage] = useState("javascript");
   const [activeTab, setActiveTab] = useState<Tab>("description");
+  const [isRunning, setIsRunning] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [runResult, setRunResult] = useState<ExecuteResult | null>(null);
+  const [showConsole, setShowConsole] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -30,28 +35,94 @@ export default function ProblemDetailPage({ params }: { params: Promise<{ id: st
     }
   }, [isAuthenticated, authLoading, router]);
 
-  useEffect(() => {
-    if (authLoading || !isAuthenticated) return;
-
-    const fetchDetail = async () => {
-      try {
-        const data = await getProblemDetail(id);
-        setProblem(data);
-        
+  const fetchDetail = async (shouldSetStarterCode = false) => {
+    try {
+      const data = await getProblemDetail(id);
+      setProblem(data);
+      
+      if (shouldSetStarterCode) {
         const template = data.codeTemplates?.find(t => t.language === language);
         if (template) {
           setCode(template.starterCode);
         }
-      } catch (err) {
-        console.error("Failed to fetch problem detail:", err);
-        setError("Không thể tải thông tin bài tập.");
-      } finally {
-        setLoading(false);
       }
-    };
+    } catch (err) {
+      console.error("Failed to fetch problem detail:", err);
+      setError("Không thể tải thông tin bài tập.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchDetail();
+  useEffect(() => {
+    if (authLoading || !isAuthenticated) return;
+    fetchDetail(true);
   }, [id, isAuthenticated, authLoading]);
+
+  const handleRun = async () => {
+    if (isRunning || isSubmitting) return;
+    setIsRunning(true);
+    setRunResult(null);
+    setShowConsole(true);
+
+    try {
+      const result = await runCode(id, code, language);
+      setRunResult(result);
+      if (result.success) {
+        toast.success("Chạy code hoàn thành!");
+      } else {
+        toast.error(`Chạy code thất bại: ${result.status.replace("_", " ").toUpperCase()}`);
+      }
+      await fetchDetail(false);
+    } catch (err: any) {
+      console.error("Failed to run code:", err);
+      const errMsg = err.response?.data?.message || err.message || "Lỗi khi chạy code.";
+      setRunResult({
+        success: false,
+        status: "compile_error",
+        passed: 0,
+        total: problem?.testCases?.length || 0,
+        message: errMsg,
+        submissionId: null
+      });
+      toast.error(errMsg);
+    } finally {
+      setIsRunning(false);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (isRunning || isSubmitting) return;
+    setIsSubmitting(true);
+    setRunResult(null);
+    setShowConsole(true);
+
+    try {
+      const result = await runCode(id, code, language);
+      setRunResult(result);
+      if (result.success) {
+        toast.success("Nộp bài thành công! Tất cả testcase đã vượt qua.");
+        setActiveTab("submissions");
+      } else {
+        toast.error(`Nộp bài thất bại: ${result.status.replace("_", " ").toUpperCase()}`);
+      }
+      await fetchDetail(false);
+    } catch (err: any) {
+      console.error("Failed to submit code:", err);
+      const errMsg = err.response?.data?.message || err.message || "Lỗi khi nộp bài.";
+      setRunResult({
+        success: false,
+        status: "compile_error",
+        passed: 0,
+        total: problem?.testCases?.length || 0,
+        message: errMsg,
+        submissionId: null
+      });
+      toast.error(errMsg);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   if (loading || authLoading) {
     return (
@@ -146,6 +217,13 @@ export default function ProblemDetailPage({ params }: { params: Promise<{ id: st
                 setCode(template?.starterCode || "");
               }
             }}
+            onRun={handleRun}
+            onSubmit={handleSubmit}
+            isRunning={isRunning}
+            isSubmitting={isSubmitting}
+            runResult={runResult}
+            showConsole={showConsole}
+            setShowConsole={setShowConsole}
           />
         </div>
       </main>
