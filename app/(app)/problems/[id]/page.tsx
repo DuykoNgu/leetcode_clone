@@ -123,6 +123,28 @@ export default function ProblemDetailPage({ params }: { params: Promise<{ id: st
       setIsSubmitting(false);
     }
   };
+  // Hàm xử lý khi click 1 bài trong lịch sử nộp bài
+  const handleViewSubmission = (sub: any) => {
+    // Chuyển ngôn ngữ ở thanh chọn
+    setLanguage(sub.language);
+    //Đổ code cũ vào Editor
+    setCode(sub.code);
+    //Phục dựng lại kết quả chạy để hiển thị ở Bảng điều khiển
+    setRunResult({
+      success: sub.status === "accepted",
+      status: sub.status,
+      passed: sub.passedCases || 0,
+      total: sub.totalCases || problem?.testCases?.length || 0,
+      message: sub.errorMessage || "",
+      submissionId: null
+    });
+    //Tự động bật Console lên để người dùng xem lỗi
+    setShowConsole(true);
+    
+    // Tùy chọn: Bật thông báo nhỏ
+    toast.info(`Đang xem lịch sử nộp bài: ${sub.language.toUpperCase()}`);
+  };
+
 
   if (loading || authLoading) {
     return (
@@ -199,7 +221,12 @@ export default function ProblemDetailPage({ params }: { params: Promise<{ id: st
               />
             )}
             {activeTab === "editorial" && <EditorialTab problem={problem} />}
-            {activeTab === "submissions" && <SubmissionsTab problem={problem} />}
+            {activeTab === "submissions" && (
+              <SubmissionsTab 
+                problem={problem} 
+                onViewSubmission={handleViewSubmission} 
+              />
+            )}
           </div>
 
         </div>

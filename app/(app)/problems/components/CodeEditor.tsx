@@ -179,7 +179,7 @@ export default function CodeEditor({
                         ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/25" 
                         : "bg-rose-500/10 text-rose-400 border border-rose-500/25"
                     )}>
-                      {runResult.status.replace("_", " ")}
+                     {runResult.status?.replace("_", " ") || runResult.message || "ERROR"}
                     </span>
                   </div>
                   <div className="text-slate-400 text-xs">
