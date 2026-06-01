@@ -44,6 +44,10 @@ export type Submission = {
   runtimeMs?: number;
   memoryKb?: number;
   submittedAt: string;
+   // THÊM
+  passedCases?: number;  
+  totalCases?: number;  
+  errorMessage?: string;
 };
 
 export type ProblemExample = {
