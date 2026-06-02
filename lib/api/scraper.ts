@@ -9,16 +9,23 @@ import apiClient from "./client";
 import { safeStorage } from "@/lib/utils/storage";
 import { API_BASE_URL } from "@/lib/env";
 
+<<<<<<< HEAD
 // Định nghĩa cụ thể 2 danh mục hợp lệ duy nhất để tránh gõ sai chuỗi (Type-safe)
 export type ScraperCategory = "algorithms" | "javascript";
 
+=======
+>>>>>>> 4d47bae054a44979b67a35efec2dcff7648b14f8
 export type ScraperJobStatus = {
   running: boolean;
   jobId?: number;
   startTime?: string;
   endTime?: string;
   limit?: number;
+<<<<<<< HEAD
   categories?: ScraperCategory[]; // Đồng bộ type danh mục mới
+=======
+  categories?: string[];
+>>>>>>> 4d47bae054a44979b67a35efec2dcff7648b14f8
   inserted?: number;
   skipped?: number;
   failed?: number;
@@ -54,7 +61,11 @@ export type ScraperLogEntry = {
 /** Khởi động job cào */
 export async function startScrape(payload: {
   limit: number;
+<<<<<<< HEAD
   categories: ScraperCategory[]; // Đồng bộ dữ liệu gửi đi từ FE
+=======
+  categories: string[];
+>>>>>>> 4d47bae054a44979b67a35efec2dcff7648b14f8
 }): Promise<{ success: boolean; jobId?: number; message?: string }> {
   const res = await apiClient.post("/admin/scraper/start", payload);
   return res.data;
@@ -77,6 +88,14 @@ export async function getScraperStatus(): Promise<{
 
 /**
  * Tạo SSE connection tới /admin/scraper/progress
+<<<<<<< HEAD
+=======
+ * Trả về EventSource instance để caller có thể đóng khi unmount.
+ *
+ * Cần truyền token trong URL vì EventSource không hỗ trợ custom headers.
+ * Backend cần chấp nhận ?token=... hoặc dùng cookie — ở đây dùng query param
+ * đơn giản; nếu BE chưa hỗ trợ, xem hướng dẫn trong comment bên dưới.
+>>>>>>> 4d47bae054a44979b67a35efec2dcff7648b14f8
  */
 export function createScraperSSE(handlers: {
   onStart?: (data: any) => void;
@@ -87,6 +106,11 @@ export function createScraperSSE(handlers: {
   onConnected?: (data: any) => void;
 }): EventSource {
   const token = safeStorage.getItem("leetcode_token") ?? "";
+<<<<<<< HEAD
+=======
+  // Truyền token qua query param để SSE có thể authenticate.
+  // (Middleware BE cần đọc req.query.token nếu Authorization header không có)
+>>>>>>> 4d47bae054a44979b67a35efec2dcff7648b14f8
   const url = `${API_BASE_URL}/admin/scraper/progress?token=${encodeURIComponent(token)}`;
 
   const es = new EventSource(url);
@@ -107,8 +131,16 @@ export function createScraperSSE(handlers: {
     handlers.onDone?.(JSON.parse(e.data));
   });
   es.addEventListener("error", (e) => {
+<<<<<<< HEAD
+=======
+    // SSE native error (kết nối thất bại)
+>>>>>>> 4d47bae054a44979b67a35efec2dcff7648b14f8
     handlers.onError?.({ message: "SSE connection error" });
   });
 
   return es;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 4d47bae054a44979b67a35efec2dcff7648b14f8

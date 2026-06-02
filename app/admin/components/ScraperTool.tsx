@@ -5,12 +5,21 @@
  *
  * Giao diện Admin để cào bài tập từ LeetCode.
  * Tính năng:
+<<<<<<< HEAD
  * - Chọn số lượng bài cần cào (1 – 500)
  * - Chọn 1 hoặc nhiều danh mục (2 dạng bài lớn của LeetCode sau khi rút gọn)
  * - Nút Start / Stop
  * - Progress bar real-time qua SSE
  * - Log terminal cuộn tự động
  * - Hiển thị kết quả tổng kết sau khi xong
+=======
+ *  - Chọn số lượng bài cần cào (1 – 500)
+ *  - Chọn 1 hoặc nhiều danh mục (5 dạng bài lớn của LeetCode)
+ *  - Nút Start / Stop
+ *  - Progress bar real-time qua SSE
+ *  - Log terminal cuộn tự động
+ *  - Hiển thị kết quả tổng kết sau khi xong
+>>>>>>> 4d47bae054a44979b67a35efec2dcff7648b14f8
  */
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
@@ -37,7 +46,11 @@ import {
   type ScraperProgressEvent,
 } from "@/lib/api/scraper";
 
+<<<<<<< HEAD
 // ── Cấu hình danh mục bài tập LeetCode (Đã giữ lại 2 danh mục) ─────────────────
+=======
+// ── Cấu hình 5 danh mục bài tập LeetCode ──────────────────────────────────────
+>>>>>>> 4d47bae054a44979b67a35efec2dcff7648b14f8
 const SCRAPER_CATEGORIES = [
   {
     value: "algorithms",
@@ -47,12 +60,39 @@ const SCRAPER_CATEGORIES = [
     activeColor: "bg-blue-600 text-white border-blue-600",
   },
   {
+<<<<<<< HEAD
+=======
+    value: "database",
+    label: "Database",
+    desc: "SQL, truy vấn cơ sở dữ liệu",
+    color: "bg-amber-50 text-amber-700 border-amber-200",
+    activeColor: "bg-amber-500 text-white border-amber-500",
+  },
+  {
+>>>>>>> 4d47bae054a44979b67a35efec2dcff7648b14f8
     value: "javascript",
     label: "JavaScript",
     desc: "Bài tập JS / TypeScript",
     color: "bg-yellow-50 text-yellow-700 border-yellow-200",
     activeColor: "bg-yellow-500 text-white border-yellow-500",
   },
+<<<<<<< HEAD
+=======
+  {
+    value: "pandas",
+    label: "Pandas",
+    desc: "Data manipulation với Python Pandas",
+    color: "bg-purple-50 text-purple-700 border-purple-200",
+    activeColor: "bg-purple-600 text-white border-purple-600",
+  },
+  {
+    value: "shell",
+    label: "Shell",
+    desc: "Bash / Shell scripting",
+    color: "bg-green-50 text-green-700 border-green-200",
+    activeColor: "bg-green-600 text-white border-green-600",
+  },
+>>>>>>> 4d47bae054a44979b67a35efec2dcff7648b14f8
 ] as const;
 
 type CategoryValue = (typeof SCRAPER_CATEGORIES)[number]["value"];
@@ -81,9 +121,15 @@ function logColor(entry: ScraperLogEntry): string {
 
 // ── Component chính ────────────────────────────────────────────────────────────
 export default function ScraperTool() {
+<<<<<<< HEAD
   // Form state - Set mặc định chọn cả hai danh mục thuật toán và javascript
   const [limit, setLimit] = useState<number>(20);
   const [selectedCategories, setSelectedCategories] = useState<CategoryValue[]>(["algorithms", "javascript"]);
+=======
+  // Form state
+  const [limit, setLimit] = useState<number>(20);
+  const [selectedCategories, setSelectedCategories] = useState<CategoryValue[]>(["algorithms"]);
+>>>>>>> 4d47bae054a44979b67a35efec2dcff7648b14f8
 
   // Job state
   const [jobState, setJobState] = useState<JobState>("idle");
@@ -289,11 +335,19 @@ export default function ScraperTool() {
               disabled={isRunning}
               className="flex-1 accent-gray-800 disabled:opacity-50"
             />
+<<<<<<< HEAD
             <span className="text-sm text-gray-400 w-16 text-right">{limit} bài mới</span>
           </div>
           <p className="text-[11px] text-gray-400 flex items-center gap-1">
             <Info size={11} />
             Hệ thống tự động lọc toàn bộ kho để lấy đủ {limit} bài chưa có trong database.
+=======
+            <span className="text-sm text-gray-400 w-16 text-right">{limit} bài</span>
+          </div>
+          <p className="text-[11px] text-gray-400 flex items-center gap-1">
+            <Info size={11} />
+            Hệ thống sẽ bỏ qua bài đã có trong DB và cào cho đủ số bài mới này.
+>>>>>>> 4d47bae054a44979b67a35efec2dcff7648b14f8
           </p>
         </div>
 
@@ -302,7 +356,11 @@ export default function ScraperTool() {
           <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">
             Danh mục bài tập LeetCode
           </label>
+<<<<<<< HEAD
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+=======
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+>>>>>>> 4d47bae054a44979b67a35efec2dcff7648b14f8
             {SCRAPER_CATEGORIES.map((cat) => {
               const active = selectedCategories.includes(cat.value);
               return (
@@ -351,7 +409,11 @@ export default function ScraperTool() {
             <>
               <div className="flex items-center gap-2 px-5 py-2.5 bg-gray-100 text-gray-500 rounded-xl text-sm font-medium">
                 <Loader2 size={15} className="animate-spin" />
+<<<<<<< HEAD
                 Đang lọc và cào dữ liệu...
+=======
+                Đang cào...
+>>>>>>> 4d47bae054a44979b67a35efec2dcff7648b14f8
               </div>
               <button
                 onClick={handleStop}
@@ -379,10 +441,17 @@ export default function ScraperTool() {
       {(isRunning || jobState === "done" || stats.current > 0) && (
         <div className="border rounded-xl p-6 space-y-4 bg-white">
           <div className="flex items-center justify-between">
+<<<<<<< HEAD
             <h2 className="text-sm font-semibold text-gray-700">Tiến độ sàng lọc dữ liệu</h2>
             {stats.total > 0 && (
               <span className="text-xs text-gray-400 font-mono">
                 Tiến trình: {stats.current} / {stats.total} bài ({progressPct}%)
+=======
+            <h2 className="text-sm font-semibold text-gray-700">Tiến độ</h2>
+            {stats.total > 0 && (
+              <span className="text-xs text-gray-400 font-mono">
+                {stats.current} / {stats.total} ({progressPct}%)
+>>>>>>> 4d47bae054a44979b67a35efec2dcff7648b14f8
               </span>
             )}
           </div>
@@ -408,16 +477,25 @@ export default function ScraperTool() {
             <div className="flex items-center gap-2.5 bg-emerald-50 border border-emerald-100 rounded-xl px-4 py-3">
               <CheckCircle2 size={16} className="text-emerald-500 shrink-0" />
               <div>
+<<<<<<< HEAD
                 <p className="text-[10px] text-emerald-600 uppercase font-bold tracking-wide">Đã thêm mới</p>
                 <p className="text-2xl font-light text-emerald-700 leading-none mt-0.5">
                   {stats.inserted} / <span className="text-sm font-normal text-emerald-600">{limit}</span>
                 </p>
+=======
+                <p className="text-[10px] text-emerald-600 uppercase font-bold tracking-wide">Thêm mới</p>
+                <p className="text-2xl font-light text-emerald-700 leading-none mt-0.5">{stats.inserted}</p>
+>>>>>>> 4d47bae054a44979b67a35efec2dcff7648b14f8
               </div>
             </div>
             <div className="flex items-center gap-2.5 bg-gray-50 border border-gray-100 rounded-xl px-4 py-3">
               <SkipForward size={16} className="text-gray-400 shrink-0" />
               <div>
+<<<<<<< HEAD
                 <p className="text-[10px] text-gray-500 uppercase font-bold tracking-wide">Đã có (Bỏ qua)</p>
+=======
+                <p className="text-[10px] text-gray-500 uppercase font-bold tracking-wide">Bỏ qua</p>
+>>>>>>> 4d47bae054a44979b67a35efec2dcff7648b14f8
                 <p className="text-2xl font-light text-gray-700 leading-none mt-0.5">{stats.skipped}</p>
               </div>
             </div>
@@ -435,7 +513,11 @@ export default function ScraperTool() {
             <div className="flex items-center gap-2 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-sm text-emerald-700">
               <CheckCircle2 size={16} />
               <span>
+<<<<<<< HEAD
                 Hoàn tất! Đã tìm thấy và cập nhật đủ <strong>{stats.inserted}</strong> bài mới vào database.
+=======
+                Hoàn tất! Đã thêm <strong>{stats.inserted}</strong> bài mới vào database.
+>>>>>>> 4d47bae054a44979b67a35efec2dcff7648b14f8
               </span>
             </div>
           )}
@@ -451,7 +533,11 @@ export default function ScraperTool() {
           >
             <span className="flex items-center gap-2">
               <Terminal size={14} />
+<<<<<<< HEAD
               Log hệ thống ({logs.length} dòng)
+=======
+              Log ({logs.length} dòng)
+>>>>>>> 4d47bae054a44979b67a35efec2dcff7648b14f8
             </span>
             {showLog ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
           </button>
@@ -476,12 +562,22 @@ export default function ScraperTool() {
       {jobState === "idle" && logs.length === 0 && (
         <div className="border border-dashed rounded-xl p-6 space-y-2 text-center text-sm text-gray-400">
           <Terminal size={24} className="mx-auto mb-3 opacity-30" />
+<<<<<<< HEAD
           <p>Nhập số lượng bài mới mục tiêu, sau đó nhấn <strong className="text-gray-600">Bắt đầu cào</strong>.</p>
           <p className="text-xs">
             Hệ thống sẽ kéo danh sách lớn từ LeetCode về, bỏ qua các bài đã có sẵn để cào bằng đủ số bài bạn yêu cầu.
+=======
+          <p>Chọn số bài và danh mục, sau đó nhấn <strong className="text-gray-600">Bắt đầu cào</strong>.</p>
+          <p className="text-xs">
+            Hệ thống sẽ tự động bỏ qua bài đã có và chỉ thêm bài mới vào database.
+>>>>>>> 4d47bae054a44979b67a35efec2dcff7648b14f8
           </p>
         </div>
       )}
     </div>
   );
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 4d47bae054a44979b67a35efec2dcff7648b14f8
