@@ -1,8 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { getMe, getPersistedAuthUser } from "@/lib/api/auth";
+import { safeStorage } from "@/lib/utils/storage";
 import type { AuthUser } from "@/lib/types";
 import { AuthStatus } from "@/components/auth/auth-ui";
 import { ProfileInfo } from "./components/ProfileInfo";
@@ -37,6 +38,11 @@ export default function ProfilePage() {
     };
 
     fetchProfile();
+  }, []);
+
+  const handleUpdateUser = useCallback((updatedUser: AuthUser) => {
+    setUser(updatedUser);
+    safeStorage.setItem("leetcode_user", JSON.stringify(updatedUser));
   }, []);
 
 
@@ -76,7 +82,7 @@ export default function ProfilePage() {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-[300px_1fr]">
           {/* Left Sidebar */}
           <div className="space-y-6">
-            <ProfileInfo user={user} />
+            <ProfileInfo user={user} onUpdate={handleUpdateUser} />
           </div>
 
           {/* Main Content */}
