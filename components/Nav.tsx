@@ -39,7 +39,7 @@ const Nav: React.FC = () => {
     <nav className="relative flex h-[60px] w-full shrink-0 items-center border-b border-gray-200 bg-white px-4">
       <header className="mt-3 flex w-full items-center justify-between">
         <div className="flex items-center gap-5">
-          <Link href="/problems" className="flex items-center">
+          <Link href="/" className="flex items-center">
             <svg
               width="32"
               height="32"

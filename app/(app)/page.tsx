@@ -1,19 +1,50 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
+import HeroBanner from "./components/dashboard/HeroBanner";
+import AnnouncementList from "./components/dashboard/AnnouncementList";
+import TrendingDiscuss from "./components/dashboard/TrendingDiscuss";
+import RightSidebar from "./components/dashboard/RightSidebar";
 
-export default function Hello2Page() {
-  const router = useRouter();
+export default function DashboardPage() {
+  const { authUser, isLoading } = useAuth();
+  const isAdmin = authUser?.role === 'admin';
+
+  if (isLoading) return <div className="h-screen flex items-center justify-center text-slate-400">Đang tải trung tâm điều khiển...</div>;
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center">
-      <h1 className="mb-8 text-4xl font-bold">Hello World 2</h1>
-      <button
-        onClick={() => router.push("/")}
-        className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-      >
-        Go to Hello World 1
-      </button>
+    <div className="min-h-[calc(100vh-60px)] bg-[#f8fafc] p-6 lg:p-8">
+      <div className="mx-auto max-w-7xl">
+        
+        {/* Header Lời chào */}
+        <header className="mb-6">
+          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
+            Hello World{authUser ? `, ${authUser.username}` : ""}! 👋
+          </h1>
+          <p className="mt-2 text-sm font-medium text-slate-500">
+            {authUser ? "Sẵn sàng để chinh phục các thử thách thuật toán hôm nay chưa?" : "Hãy đăng nhập để lưu lại tiến trình học tập của bạn."}
+          </p>
+        </header>
+
+        {/* Banner Contest */}
+        <HeroBanner isAdmin={isAdmin} />
+
+        {/* Khung chứa nội dung 2 cột */}
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+          
+          {/* CỘT TRÁI (65%): Bảng tin & Đang rôm rả */}
+          <div className="lg:col-span-8 flex flex-col gap-8">
+            <AnnouncementList isAdmin={isAdmin} />
+            <TrendingDiscuss />
+          </div>
+
+          {/* CỘT PHẢI (35%): Gamification, Pick One, Discuss Now */}
+          <div className="lg:col-span-4">
+            <RightSidebar authUser={authUser} />
+          </div>
+
+        </div>
+      </div>
     </div>
   );
 }
