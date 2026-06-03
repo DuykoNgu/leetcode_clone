@@ -17,7 +17,7 @@ type Tab = "description" | "editorial" | "submissions";
 export default function ProblemDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
-  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const { isAuthenticated, isLoading: authLoading, refreshUser } = useAuth();
   const [problem, setProblem] = useState<ApiProblem | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -66,7 +66,7 @@ export default function ProblemDetailPage({ params }: { params: Promise<{ id: st
     setShowConsole(true);
 
     try {
-      const result = await runCode(id, code, language);
+      const result = await runCode(id, code, language, false);
       setRunResult(result);
       if (result.success) {
         toast.success("Chạy code hoàn thành!");
@@ -98,11 +98,12 @@ export default function ProblemDetailPage({ params }: { params: Promise<{ id: st
     setShowConsole(true);
 
     try {
-      const result = await runCode(id, code, language);
+      const result = await runCode(id, code, language, true);
       setRunResult(result);
       if (result.success) {
         toast.success("Nộp bài thành công! Tất cả testcase đã vượt qua.");
         setActiveTab("submissions");
+        refreshUser();
       } else {
         toast.error(`Nộp bài thất bại: ${result.status.replace("_", " ").toUpperCase()}`);
       }
@@ -121,6 +122,15 @@ export default function ProblemDetailPage({ params }: { params: Promise<{ id: st
       toast.error(errMsg);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  //hàm sử lý reset lại khung làm bài
+  const handleReset = () => {
+    const template = problem?.codeTemplates?.find(t => t.language === language);
+    if (template) {
+      setCode(template.starterCode);
+      toast.success("Đã khôi phục code ban đầu");
     }
   };
   // Hàm xử lý khi click 1 bài trong lịch sử nộp bài
@@ -237,6 +247,7 @@ export default function ProblemDetailPage({ params }: { params: Promise<{ id: st
             value={code} 
             onChange={setCode}
             language={language}
+            onReset={handleReset}
             onLanguageChange={(newLang) => {
               setLanguage(newLang);
               if (problem?.codeTemplates) {

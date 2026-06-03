@@ -28,12 +28,14 @@ export interface ExecuteResult {
 export const runCode = async (
   problemId: string,
   code: string,
-  language: string
+  language: string,
+  isSubmit: boolean
 ): Promise<ExecuteResult> => {
   const response = await apiClient.post<ExecuteResult>("/execute/run", {
     problemId,
     code,
     language,
+    isSubmit,
   });
   return response.data;
 };
