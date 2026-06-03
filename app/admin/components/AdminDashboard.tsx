@@ -1,5 +1,9 @@
 "use client";
 
+<<<<<<< HEAD
+import React, { useState, useEffect, useCallback } from "react";
+import { LogOut, LayoutDashboard, Users, BookOpen } from "lucide-react";
+=======
 /**
  * FILE: app/admin/components/AdminDashboard.tsx  (THAY THẾ HOÀN TOÀN)
  *
@@ -9,12 +13,21 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { LogOut, LayoutDashboard, Users, BookOpen, Download } from "lucide-react";
 import ImportProblem from "./ImportProblem";
+>>>>>>> 4d47bae054a44979b67a35efec2dcff7648b14f8
 import ScraperTool from "./ScraperTool";
 import { useAuth } from "@/hooks/useAuth";
 import { getAdminUsers } from "@/lib/api/auth";
 import { getAdminStats, getProblems } from "@/lib/api/problems";
 import { toast } from "sonner";
 
+<<<<<<< HEAD
+type Tab = "overview" | "users" | "problems";
+
+const TABS: { id: Tab; label: string; icon: React.ElementType }[] = [
+  { id: "overview", label: "Overview", icon: LayoutDashboard },
+  { id: "users",    label: "Users",    icon: Users },
+  { id: "problems", label: "Problems", icon: BookOpen },
+=======
 type Tab = "overview" | "users" | "problems" | "scraper";
 
 const TABS: { id: Tab; label: string; icon: React.ElementType }[] = [
@@ -22,6 +35,7 @@ const TABS: { id: Tab; label: string; icon: React.ElementType }[] = [
   { id: "users",     label: "Users",     icon: Users },
   { id: "problems",  label: "Problems",  icon: BookOpen },
   { id: "scraper",   label: "Scraper",   icon: Download },
+>>>>>>> 4d47bae054a44979b67a35efec2dcff7648b14f8
 ];
 
 export default function AdminDashboard() {
@@ -86,26 +100,66 @@ export default function AdminDashboard() {
             onClick={() => setActiveTab(id)}
             className={`
               flex items-center gap-2 px-4 pb-4 text-sm font-medium transition-all
+<<<<<<< HEAD
+              ${activeTab === id
+                ? "border-b-2 border-gray-900 text-gray-900"
+                : "text-gray-400 hover:text-gray-600"
+=======
               ${
                 activeTab === id
                   ? "border-b-2 border-gray-900 text-gray-900"
                   : "text-gray-400 hover:text-gray-600"
+>>>>>>> 4d47bae054a44979b67a35efec2dcff7648b14f8
               }
             `}
           >
             <Icon size={14} />
             {label}
+<<<<<<< HEAD
+=======
             {id === "scraper" && (
               <span className="ml-1 text-[9px] uppercase bg-blue-100 text-blue-600 font-bold px-1.5 py-0.5 rounded-full tracking-wide">
                 New
               </span>
             )}
+>>>>>>> 4d47bae054a44979b67a35efec2dcff7648b14f8
           </button>
         ))}
       </div>
 
       {/* Content */}
       <div className="py-2">
+<<<<<<< HEAD
+
+        {/* ── Overview ── */}
+        {activeTab === "overview" && (
+          <div className="space-y-8">
+            {/* Stats cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="p-6 border rounded-lg">
+                <p className="text-xs text-gray-400 uppercase font-bold mb-1">Người dùng</p>
+                <p className="text-3xl font-light">{stats.totalUsers}</p>
+              </div>
+              <div className="p-6 border rounded-lg">
+                <p className="text-xs text-gray-400 uppercase font-bold mb-1">Câu hỏi</p>
+                <p className="text-3xl font-light">{stats.totalProblems}</p>
+              </div>
+              <div className="p-6 border rounded-lg">
+                <p className="text-xs text-gray-400 uppercase font-bold mb-1">Lượt giải</p>
+                <p className="text-3xl font-light">{stats.totalSubmissions}</p>
+              </div>
+            </div>
+
+            {/* Scraper Tool — thay thế ImportProblem */}
+            <div>
+              <div className="mb-4">
+                <h2 className="text-sm font-semibold text-gray-700">Thêm bài tập từ LeetCode</h2>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  Chọn số lượng và danh mục, hệ thống sẽ cào và lưu tự động vào database.
+                </p>
+              </div>
+              <ScraperTool />
+=======
         {/* ── Overview ── */}
         {activeTab === "overview" && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -135,6 +189,7 @@ export default function AdminDashboard() {
                 để cào hàng loạt.
               </p>
               <ImportProblem />
+>>>>>>> 4d47bae054a44979b67a35efec2dcff7648b14f8
             </div>
           </div>
         )}
@@ -183,6 +238,13 @@ export default function AdminDashboard() {
                   <tr key={p.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 font-medium">{p.title}</td>
                     <td className="px-6 py-4">
+<<<<<<< HEAD
+                      <span className={`text-xs font-medium ${
+                        p.difficulty === 0 ? "text-green-600"
+                        : p.difficulty === 1 ? "text-amber-600"
+                        : "text-red-500"
+                      }`}>
+=======
                       <span
                         className={`text-xs font-medium ${
                           p.difficulty === 0
@@ -192,15 +254,22 @@ export default function AdminDashboard() {
                             : "text-red-500"
                         }`}
                       >
+>>>>>>> 4d47bae054a44979b67a35efec2dcff7648b14f8
                         {p.difficulty === 0 ? "Easy" : p.difficulty === 1 ? "Medium" : "Hard"}
                       </span>
                     </td>
                     <td className="px-6 py-4">
+<<<<<<< HEAD
+                      <span className={`w-2 h-2 inline-block rounded-full mr-2 ${
+                        p.isActive ? "bg-green-500" : "bg-gray-300"
+                      }`} />
+=======
                       <span
                         className={`w-2 h-2 inline-block rounded-full mr-2 ${
                           p.isActive ? "bg-green-500" : "bg-gray-300"
                         }`}
                       />
+>>>>>>> 4d47bae054a44979b67a35efec2dcff7648b14f8
                       {p.isActive ? "Active" : "Hidden"}
                     </td>
                   </tr>
@@ -210,6 +279,8 @@ export default function AdminDashboard() {
           </div>
         )}
 
+<<<<<<< HEAD
+=======
         {/* ── Scraper ── */}
         {activeTab === "scraper" && (
           <div>
@@ -223,6 +294,7 @@ export default function AdminDashboard() {
             <ScraperTool />
           </div>
         )}
+>>>>>>> 4d47bae054a44979b67a35efec2dcff7648b14f8
       </div>
     </div>
   );
