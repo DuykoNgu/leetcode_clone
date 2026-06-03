@@ -138,15 +138,15 @@ const ImportProblem = () => {
             <button
                 onClick={handleCrawlAll}
                 disabled={loading}
-                className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm transition-all disabled:opacity-50 shadow-lg shadow-blue-500/20"
+                className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm transition-all disabled:opacity-50 shadow-lg shadow-blue-500/20 dark:shadow-blue-900/30"
             >
                 {loading ? <Loader2 className="animate-spin" size={18} /> : <Rocket size={18} />}
                 {loading ? `Đang cào (${progress.current}/${progress.total})...` : 'Crawl Top 5 LeetCode'}
             </button>
             
             {loading && progress.total > 0 && (
-                <div className="text-[10px] text-gray-500 font-medium animate-pulse ml-1">
-                    Đang xử lý: <span className="text-blue-600">{progress.currentName}</span>
+                <div className="text-[10px] text-gray-500 dark:text-gray-400 font-medium animate-pulse ml-1">
+                    Đang xử lý: <span className="text-blue-600 dark:text-blue-400">{progress.currentName}</span>
                 </div>
             )}
         </div>

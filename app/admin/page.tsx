@@ -5,7 +5,7 @@ import ProtectedRoute from "@/components/auth/ProtectedRoute";
 export default function AdminPage() {
     return (
         <Suspense fallback={
-            <div className="h-screen flex items-center justify-center text-sm text-gray-400">
+            <div className="h-screen flex items-center justify-center text-sm text-gray-400 dark:text-gray-500 bg-white dark:bg-gray-950">
                 Loading Dashboard...
             </div>
         }>
