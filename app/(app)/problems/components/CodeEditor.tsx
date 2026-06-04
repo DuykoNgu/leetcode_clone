@@ -15,6 +15,7 @@ type CodeEditorProps = {
   height?: string;
   onRun?: () => void;
   onSubmit?: () => void;
+  onReset?: () => void;
   isRunning?: boolean;
   isSubmitting?: boolean;
   runResult?: ExecuteResult | null;
@@ -49,6 +50,7 @@ export default function CodeEditor({
   height = "100%",
   onRun,
   onSubmit,
+  onReset,
   isRunning = false,
   isSubmitting = false,
   runResult = null,
@@ -94,7 +96,7 @@ export default function CodeEditor({
             <option value="java">Java</option>
             <option value="cpp">C++</option>
           </select>
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-slate-600">
+          <Button variant="ghost" size="icon" onClick={onReset} className="h-8 w-8 text-slate-400 hover:text-slate-600">
             <RotateCcw className="size-3.5" />
           </Button>
         </div>
