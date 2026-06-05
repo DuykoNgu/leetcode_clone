@@ -26,6 +26,7 @@ type TableQuestionProps = {
     solvedCount: number;
     streakDays: number;
   };
+  page?: number;
 };
 
 const difficultyStyles: Record<string, string> = {
@@ -34,6 +35,8 @@ const difficultyStyles: Record<string, string> = {
   Hard: "bg-rose-50 text-rose-600 border-none",
 };
 
+const PAGE_SIZE = 50;
+
 export default function TableQuestion({
   problems,
   totalCount,
@@ -41,6 +44,7 @@ export default function TableQuestion({
   onProblemSelect,
   isAuthenticated = true,
   userStats,
+  page = 1,
 }: TableQuestionProps) {
   const router = useRouter();
   const solvedCount = solvedProblemIds.size;
@@ -148,7 +152,8 @@ export default function TableQuestion({
                     <TableCell className="py-4">
                       <div className="flex flex-col">
                         <span className="text-[15px] font-semibold text-slate-700 group-hover:text-brand-orange transition-colors">
-                          {index + 1}. {problem.title}
+                          <span className="text-slate-400 mr-1.5">{problem.id}.</span>
+                          {problem.title}
                         </span>
                         <span className="text-[11px] text-slate-400 font-medium">
                           Thuật toán

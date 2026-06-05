@@ -9,7 +9,8 @@ import ProblemHeader from "../components/ProblemHeader";
 import { Loader2, MessageSquare, History, FileText } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
-import { EditorialTab, SubmissionsTab, TabButton } from "../../../../components/common/TabButton";
+import { EditorialTab, SubmissionsTab } from "../components/ProblemTabs";
+import { TabButton } from "@/components/common/TabButton";
 import { toast } from "sonner";
 
 type Tab = "description" | "editorial" | "submissions";

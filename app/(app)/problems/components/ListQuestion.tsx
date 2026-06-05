@@ -34,6 +34,9 @@ export default function ListQuestion({
   const [solvedProblemIds, setSolvedProblemIds] = useState<Set<string>>(new Set());
   const [problems, setProblems] = useState<DBProblem[]>([]);
   const [userStats, setUserStats] = useState({ solvedCount: 0, streakDays: 0 });
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const { isAuthenticated } = useAuth();
 
   const effectiveSearch = searchQuery || debouncedSearch;
@@ -43,16 +46,27 @@ export default function ListQuestion({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const params = {
-          search: effectiveSearch,
+        const sortFieldMap: Record<string, string> = {
+          default: "id",
+          difficulty: "difficulty",
+          acceptance: "acceptanceRate",
+        };
+        const params: any = {
           category: effectiveCategory === "all-code-essentials" ? undefined : effectiveCategory,
           difficulty: effectiveDifficulty || undefined,
+          page,
+          limit: 50,
+          sortBy: sortFieldMap[sortBy],
+          sortOrder: sortDirection,
         };
         const response = await getProblems(params);
-        const apiData = response.data;
-        
+
         if (response.userStats) {
           setUserStats(response.userStats);
+        }
+        if (response.pagination) {
+          setTotalPages(response.pagination.totalPages);
+          setTotalCount(response.pagination.total);
         }
 
         const difficultyMap: Record<number, "Easy" | "Medium" | "Hard"> = {
@@ -60,12 +74,10 @@ export default function ListQuestion({
           1: "Medium",
           2: "Hard",
         };
-        
+
         const solvedIds = new Set<string>();
-        const mappedData: DBProblem[] = apiData.map((problem: any) => {
-          if (problem.isSolved) {
-            solvedIds.add(problem.id);
-          }
+        const mappedData: DBProblem[] = response.data.map((problem: any) => {
+          if (problem.isSolved) solvedIds.add(problem.id);
           return {
             id: problem.id,
             title: problem.title,
@@ -74,10 +86,10 @@ export default function ListQuestion({
             order: 0,
             acceptanceRate: Number(problem.acceptanceRate),
             createdAt: problem.createdAt,
-            isSolved: problem.isSolved
+            isSolved: problem.isSolved,
           };
         });
-        
+
         setProblems(mappedData);
         setSolvedProblemIds(solvedIds);
       } catch (error) {
@@ -86,31 +98,19 @@ export default function ListQuestion({
       }
     };
     fetchData();
-  }, [isAuthenticated, effectiveSearch, effectiveCategory, effectiveDifficulty]);
+  }, [isAuthenticated, effectiveSearch, effectiveCategory, effectiveDifficulty, page, sortBy, sortDirection]);
 
+  useEffect(() => { setPage(1); }, [effectiveSearch, effectiveCategory, effectiveDifficulty, sortBy, sortDirection]);
 
   const filteredProblems = useMemo(() => {
-    return [...problems].sort((a, b) => {
-      if (sortBy === "default") {
-        return (a.order ?? 0) - (b.order ?? 0);
-      }
+    const q = effectiveSearch.toLowerCase();
+    if (!q) return problems;
+    return problems.filter((p) =>
+      p.title.toLowerCase().includes(q) || p.id.includes(q)
+    );
+  }, [problems, effectiveSearch]);
 
-      if (sortBy === "difficulty") {
-        const difficultyOrder = { Easy: 1, Medium: 2, Hard: 3 };
-        const comparison = difficultyOrder[a.difficulty] - difficultyOrder[b.difficulty];
-        return sortDirection === "asc" ? comparison : -comparison;
-      }
-
-      if (sortBy === "acceptance") {
-        const acceptanceA = a.acceptanceRate ?? 50;
-        const acceptanceB = b.acceptanceRate ?? 50;
-        const comparison = acceptanceA - acceptanceB;
-        return sortDirection === "asc" ? comparison : -comparison;
-      }
-
-      return 0;
-    });
-  }, [problems, effectiveSearch, effectiveCategory, effectiveDifficulty, sortBy, sortDirection]);
+  useEffect(() => { if (page > totalPages) setPage(totalPages || 1); }, [page, totalPages]);
 
   const toggleSort = (option: SortOption) => {
     if (sortBy === option) {
@@ -154,12 +154,49 @@ export default function ListQuestion({
         <div className="max-w-7xl mx-auto py-4">
           <TableQuestion
             problems={filteredProblems}
-            totalCount={problems.length}
+            totalCount={totalCount}
             solvedProblemIds={solvedProblemIds}
             onProblemSelect={onProblemSelect || (() => {})}
             isAuthenticated={isAuthenticated}
             userStats={userStats}
+            page={page}
           />
+
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-2 mt-6">
+              <button
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-40 transition-colors"
+              >
+                Prev
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter((p) => p === 1 || p === totalPages || Math.abs(p - page) <= 2)
+                .map((p, idx, arr) => (
+                  <span key={p} className="flex items-center gap-1">
+                    {idx > 0 && arr[idx - 1] !== p - 1 && <span className="text-slate-300 px-1">...</span>}
+                    <button
+                      onClick={() => setPage(p)}
+                      className={`min-w-[32px] rounded-lg px-2.5 py-1.5 text-xs font-bold transition-colors ${
+                        p === page
+                          ? "bg-brand-orange text-white shadow-sm"
+                          : "text-slate-600 hover:bg-slate-100"
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  </span>
+                ))}
+              <button
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+                className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-40 transition-colors"
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -11,7 +11,7 @@ import { AdminLayout, type NavItem } from "@/components/ui/dashboard-with-collap
 import { OverviewContent } from "./OverviewContent";
 import { UsersContent } from "./UsersContent";
 import { ProblemsContent } from "./ProblemsContent";
-import { ScraperContent } from "./ScraperContent";
+import ScraperTool from "./ScraperTool";
 import { useAuth } from "@/hooks/useAuth";
 import { getAdminUsers } from "@/lib/api/auth";
 import { getAdminStats, getProblems } from "@/lib/api/problems";
@@ -40,11 +40,18 @@ export default function AdminDashboard() {
       const [statsRes, usersRes, problemsRes] = await Promise.all([
         getAdminStats(),
         getAdminUsers(),
-        getProblems({ limit: 100 }),
+        getProblems({ limit: 1000 }),
       ]);
       if (statsRes.success) setStats(statsRes.data);
       if (usersRes.success) setUsers(usersRes.data);
-      if (problemsRes.success) setProblems(problemsRes.data);
+      if (problemsRes?.data) {
+        setProblems((problemsRes.data as any).map((p: any) => ({
+          id: p.id,
+          title: p.title,
+          difficulty: p.difficulty,
+          isActive: p.isActive ?? true,
+        })));
+      }
     } catch {
       toast.error("Không thể tải dữ liệu");
     } finally {
@@ -87,8 +94,8 @@ export default function AdminDashboard() {
         <OverviewContent stats={stats} difficultyData={difficultyData} />
       )}
       {activeTab === "users" && <UsersContent users={users} />}
-      {activeTab === "problems" && <ProblemsContent problems={problems} />}
-      {activeTab === "scraper" && <ScraperContent />}
+      {activeTab === "problems" && <ProblemsContent problems={problems} onRefresh={fetchData} />}
+      {activeTab === "scraper" && <ScraperTool />}
     </AdminLayout>
   );
 }

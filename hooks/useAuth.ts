@@ -111,6 +111,8 @@ export function useAuth() {
       clearPersistedAuthSession();
       setAuthUser(null);
       window.dispatchEvent(new Event("storage"));
+      document.documentElement.classList.remove("dark");
+      localStorage.removeItem("theme");
       toast.info("Đã đăng xuất");
       router.push("/");
     }

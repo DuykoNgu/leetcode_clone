@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { ChevronsRight, LogOut, Moon, Sun } from "lucide-react";
+import { ChevronsRight, Home, LogOut, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
+import { useRouter } from "next/navigation";
 
 export type NavItem = {
   id: string;
@@ -32,12 +33,13 @@ export function AdminLayout({
 }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const { theme, setTheme } = useTheme();
+  const router = useRouter();
   const isDark = theme === "dark";
 
   return (
-    <div className="flex min-h-screen w-full bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100">
+    <div className="flex h-screen w-full bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100">
       <nav
-        className={`sticky top-0 h-screen shrink-0 border-r transition-all duration-300 ease-in-out ${
+        className={`shrink-0 border-r transition-all duration-300 ease-in-out flex flex-col relative ${
           sidebarOpen ? "w-64" : "w-16"
         } border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-2 shadow-sm`}
       >
@@ -61,7 +63,7 @@ export function AdminLayout({
           </div>
         </div>
 
-        <div className="space-y-1 mb-8">
+        <div className="flex-1 overflow-y-auto space-y-1">
           {navItems.map((item) => (
             <SidebarItem
               key={item.id}
@@ -97,35 +99,48 @@ export function AdminLayout({
         </button>
       </nav>
 
-      <div className="flex-1 p-6 overflow-auto">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-              {headerTitle}
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">
-              {headerSubtitle}
-            </p>
-          </div>
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => setTheme(isDark ? "light" : "dark")}
-              className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-              title={isDark ? "Light mode" : "Dark mode"}
-            >
-              {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            </button>
-            <button
-              onClick={onLogout}
-              className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 transition-colors"
-              title="Logout"
-            >
-              <LogOut className="h-4 w-4" />
-            </button>
+      <div className="flex flex-1 flex-col min-h-0">
+        <div className="shrink-0 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                {headerTitle}
+              </h1>
+              {headerSubtitle && (
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+                  {headerSubtitle}
+                </p>
+              )}
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setTheme(isDark ? "light" : "dark")}
+                className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                title={isDark ? "Light mode" : "Dark mode"}
+              >
+                {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              </button>
+              <button
+                onClick={() => router.push("/")}
+                className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                title="Về trang chủ"
+              >
+                <Home className="h-4 w-4" />
+              </button>
+              <button
+                onClick={onLogout}
+                className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                title="Logout"
+              >
+                <LogOut className="h-4 w-4" />
+              </button>
+            </div>
           </div>
         </div>
 
-        {children}
+        <div className="flex-1 overflow-auto min-h-0 p-6">
+          {children}
+        </div>
       </div>
     </div>
   );
