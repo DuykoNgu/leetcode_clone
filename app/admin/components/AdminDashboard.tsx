@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   LayoutDashboard,
   Users,
@@ -56,6 +56,16 @@ export default function AdminDashboard() {
     fetchData();
   }, [fetchData]);
 
+  const difficultyData = useMemo(() => {
+    const counts = { Easy: 0, Medium: 0, Hard: 0 };
+    const colors = { Easy: "#22c55e", Medium: "#eab308", Hard: "#ef4444" };
+    for (const p of problems) {
+      const key = p.difficulty === 0 ? "Easy" : p.difficulty === 1 ? "Medium" : "Hard";
+      counts[key]++;
+    }
+    return Object.entries(counts).map(([name, value]) => ({ name, value, color: colors[name as keyof typeof colors] }));
+  }, [problems]);
+
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center text-sm text-gray-500 dark:text-gray-400">
@@ -74,7 +84,7 @@ export default function AdminDashboard() {
       headerSubtitle="Quản lý hệ thống LeetCode Clone"
     >
       {activeTab === "overview" && (
-        <OverviewContent stats={stats} onSwitchToScraper={() => setActiveTab("scraper")} />
+        <OverviewContent stats={stats} difficultyData={difficultyData} />
       )}
       {activeTab === "users" && <UsersContent users={users} />}
       {activeTab === "problems" && <ProblemsContent problems={problems} />}
