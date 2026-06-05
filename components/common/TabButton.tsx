@@ -29,17 +29,19 @@ export function TabButton({
   );
 }
 
-export function EditorialTab({ problem }: { problem: ApiProblem }) {
+export function EditorialTab({ problem, language }: { problem: ApiProblem; language?: string }) {
+  const template = problem.codeTemplates?.find(t => t.language === language && t.solutionCode);
+  const solutionCode = template?.solutionCode || problem.codeTemplates?.find(t => t.solutionCode)?.solutionCode;
   return (
     <div className="h-full overflow-y-auto p-6">
       <div className="flex items-center gap-2 mb-4">
         <div className="h-6 w-1 rounded-full bg-brand-orange" />
         <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">Official Solution</h2>
       </div>
-      {problem.codeTemplates?.find(t => t.solutionCode)?.solutionCode ? (
+      {solutionCode ? (
         <div className="rounded-xl border border-slate-100 bg-slate-50 p-4">
           <pre className="font-mono text-sm text-slate-700 whitespace-pre-wrap">
-            {problem.codeTemplates.find(t => t.solutionCode)?.solutionCode}
+            {solutionCode}
           </pre>
         </div>
       ) : (

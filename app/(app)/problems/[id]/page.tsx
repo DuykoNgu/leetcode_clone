@@ -230,7 +230,7 @@ export default function ProblemDetailPage({ params }: { params: Promise<{ id: st
                 constraints={problem.constraints?.map(c => c.content) || []} 
               />
             )}
-            {activeTab === "editorial" && <EditorialTab problem={problem} />}
+            {activeTab === "editorial" && <EditorialTab problem={problem} language={language} />}
             {activeTab === "submissions" && (
               <SubmissionsTab 
                 problem={problem} 
