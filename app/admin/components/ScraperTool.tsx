@@ -6,7 +6,6 @@
  * Giao diện Admin để cào bài tập từ LeetCode.
  * Tính năng:
  *  - Chọn số lượng bài cần cào (1 – 500)
- *  - Chọn 1 hoặc nhiều danh mục (5 dạng bài lớn của LeetCode)
  *  - Nút Start / Stop
  *  - Progress bar real-time qua SSE
  *  - Log terminal cuộn tự động
@@ -37,47 +36,6 @@ import {
   type ScraperProgressEvent,
 } from "@/lib/api/scraper";
 
-// ── Cấu hình 5 danh mục bài tập LeetCode ──────────────────────────────────────
-const SCRAPER_CATEGORIES = [
-  {
-    value: "algorithms",
-    label: "Algorithms",
-    desc: "Thuật toán tổng quát (Array, DP, Graph...)",
-    color: "bg-blue-50 text-blue-700 border-blue-200",
-    activeColor: "bg-blue-600 text-white border-blue-600",
-  },
-  {
-    value: "database",
-    label: "Database",
-    desc: "SQL, truy vấn cơ sở dữ liệu",
-    color: "bg-amber-50 text-amber-700 border-amber-200",
-    activeColor: "bg-amber-500 text-white border-amber-500",
-  },
-  {
-    value: "javascript",
-    label: "JavaScript",
-    desc: "Bài tập JS / TypeScript",
-    color: "bg-yellow-50 text-yellow-700 border-yellow-200",
-    activeColor: "bg-yellow-500 text-white border-yellow-500",
-  },
-  {
-    value: "pandas",
-    label: "Pandas",
-    desc: "Data manipulation với Python Pandas",
-    color: "bg-purple-50 text-purple-700 border-purple-200",
-    activeColor: "bg-purple-600 text-white border-purple-600",
-  },
-  {
-    value: "shell",
-    label: "Shell",
-    desc: "Bash / Shell scripting",
-    color: "bg-green-50 text-green-700 border-green-200",
-    activeColor: "bg-green-600 text-white border-green-600",
-  },
-] as const;
-
-type CategoryValue = (typeof SCRAPER_CATEGORIES)[number]["value"];
-
 // ── Types ──────────────────────────────────────────────────────────────────────
 type JobState = "idle" | "running" | "done" | "error";
 
@@ -104,7 +62,6 @@ function logColor(entry: ScraperLogEntry): string {
 export default function ScraperTool() {
   // Form state
   const [limit, setLimit] = useState<number>(20);
-  const [selectedCategories, setSelectedCategories] = useState<CategoryValue[]>(["algorithms"]);
 
   // Job state
   const [jobState, setJobState] = useState<JobState>("idle");
@@ -218,30 +175,14 @@ export default function ScraperTool() {
     esRef.current = es;
   }, [appendLog]);
 
-  // ── Toggle danh mục ──
-  const toggleCategory = (cat: CategoryValue) => {
-    setSelectedCategories((prev) =>
-      prev.includes(cat)
-        ? prev.length === 1
-          ? prev // Luôn giữ ít nhất 1 danh mục
-          : prev.filter((c) => c !== cat)
-        : [...prev, cat]
-    );
-  };
-
   // ── Bắt đầu cào ──
   const handleStart = async () => {
-    if (selectedCategories.length === 0) {
-      toast.warning("Vui lòng chọn ít nhất 1 danh mục.");
-      return;
-    }
-
     setLogs([]);
     setStats({ inserted: 0, skipped: 0, failed: 0, current: 0, total: 0 });
     setJobState("running");
 
     try {
-      const result = await startScrape({ limit, categories: selectedCategories });
+      const result = await startScrape({ limit, categories: ["algorithms", "database", "javascript", "pandas", "shell"] });
       if (!result.success) {
         toast.error(result.message ?? "Không thể khởi động job.");
         setJobState("idle");
@@ -295,6 +236,7 @@ export default function ScraperTool() {
               type="number"
               min={1}
               max={500}
+              step={1}
               value={limit}
               onChange={(e) => setLimit(Math.max(1, Math.min(500, Number(e.target.value))))}
               disabled={isRunning}
@@ -310,48 +252,11 @@ export default function ScraperTool() {
               disabled={isRunning}
               className="flex-1 accent-gray-800 disabled:opacity-50"
             />
-            <span className="text-sm text-gray-400 w-16 text-right">{limit} bài</span>
+            <span className="text-sm text-gray-400 w-16 text-right">{limit} / 500</span>
           </div>
           <p className="text-[11px] text-gray-400 flex items-center gap-1">
             <Info size={11} />
             Hệ thống sẽ bỏ qua bài đã có trong DB và cào cho đủ số bài mới này.
-          </p>
-        </div>
-
-        {/* Danh mục */}
-        <div className="space-y-3">
-          <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-            Danh mục bài tập LeetCode
-          </label>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {SCRAPER_CATEGORIES.map((cat) => {
-              const active = selectedCategories.includes(cat.value);
-              return (
-                <button
-                  key={cat.value}
-                  onClick={() => toggleCategory(cat.value)}
-                  disabled={isRunning}
-                  className={`
-                    relative text-left border rounded-xl px-4 py-3 transition-all
-                    disabled:opacity-50 disabled:cursor-not-allowed
-                    ${active ? cat.activeColor + " shadow-sm" : cat.color + " hover:shadow-sm"}
-                  `}
-                >
-                  {active && (
-                    <span className="absolute top-2 right-2">
-                      <CheckCircle2 size={14} />
-                    </span>
-                  )}
-                  <p className="text-sm font-semibold">{cat.label}</p>
-                  <p className={`text-[11px] mt-0.5 ${active ? "opacity-80" : "opacity-60"}`}>
-                    {cat.desc}
-                  </p>
-                </button>
-              );
-            })}
-          </div>
-          <p className="text-[11px] text-gray-400">
-            Đã chọn: <strong>{selectedCategories.join(", ")}</strong>
           </p>
         </div>
 
@@ -495,7 +400,7 @@ export default function ScraperTool() {
       {jobState === "idle" && logs.length === 0 && (
         <div className="border border-dashed rounded-xl p-6 space-y-2 text-center text-sm text-gray-400">
           <Terminal size={24} className="mx-auto mb-3 opacity-30" />
-          <p>Chọn số bài và danh mục, sau đó nhấn <strong className="text-gray-600">Bắt đầu cào</strong>.</p>
+          <p>Chọn số bài cần cào, sau đó nhấn <strong className="text-gray-600">Bắt đầu cào</strong>.</p>
           <p className="text-xs">
             Hệ thống sẽ tự động bỏ qua bài đã có và chỉ thêm bài mới vào database.
           </p>
