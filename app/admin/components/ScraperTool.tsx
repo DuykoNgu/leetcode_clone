@@ -220,15 +220,15 @@ export default function ScraperTool() {
   return (
     <div className="space-y-6">
       {/* ── Cấu hình ────────────────────────────────────────────────────────── */}
-      <div className="border rounded-xl p-6 space-y-6 bg-white">
+      <div className="border rounded-xl p-6 space-y-6 bg-white dark:bg-gray-900 dark:border-gray-700">
         <div className="flex items-center gap-2">
-          <Terminal size={16} className="text-gray-400" />
-          <h2 className="text-sm font-semibold text-gray-700">Cấu hình cào bài</h2>
+          <Terminal size={16} className="text-gray-400 dark:text-gray-500" />
+          <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200">Cấu hình cào bài</h2>
         </div>
 
         {/* Số lượng bài */}
         <div className="space-y-2">
-          <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+          <label className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
             Số bài muốn cào mới
           </label>
           <div className="flex items-center gap-4">
@@ -240,7 +240,7 @@ export default function ScraperTool() {
               value={limit}
               onChange={(e) => setLimit(Math.max(1, Math.min(500, Number(e.target.value))))}
               disabled={isRunning}
-              className="w-24 border rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-gray-200 disabled:opacity-50 disabled:bg-gray-50"
+              className="w-24 border rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-gray-200 dark:focus:ring-gray-600 disabled:opacity-50 disabled:bg-gray-50 dark:disabled:bg-gray-800 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600"
             />
             <input
               type="range"
@@ -250,23 +250,23 @@ export default function ScraperTool() {
               value={limit}
               onChange={(e) => setLimit(Number(e.target.value))}
               disabled={isRunning}
-              className="flex-1 accent-gray-800 disabled:opacity-50"
+              className="flex-1 accent-gray-800 dark:accent-gray-300 disabled:opacity-50"
             />
-            <span className="text-sm text-gray-400 w-16 text-right">{limit} / 500</span>
+            <span className="text-sm text-gray-400 dark:text-gray-500 w-16 text-right">{limit} / 500</span>
           </div>
-          <p className="text-[11px] text-gray-400 flex items-center gap-1">
+          <p className="text-[11px] text-gray-400 dark:text-gray-500 flex items-center gap-1">
             <Info size={11} />
             Hệ thống sẽ bỏ qua bài đã có trong DB và cào cho đủ số bài mới này.
           </p>
         </div>
 
         {/* Nút điều khiển */}
-        <div className="flex items-center gap-3 pt-2 border-t">
+        <div className="flex items-center gap-3 pt-2 border-t dark:border-gray-700">
           {!isRunning && jobState !== "done" && (
             <button
               onClick={handleStart}
               disabled={isRunning}
-              className="flex items-center gap-2 px-5 py-2.5 bg-gray-900 hover:bg-gray-700 text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 shadow-sm"
+              className="flex items-center gap-2 px-5 py-2.5 bg-gray-900 hover:bg-gray-700 dark:bg-blue-600 dark:hover:bg-blue-700 text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 shadow-sm"
             >
               <Play size={15} />
               Bắt đầu cào
@@ -275,13 +275,13 @@ export default function ScraperTool() {
 
           {isRunning && (
             <>
-              <div className="flex items-center gap-2 px-5 py-2.5 bg-gray-100 text-gray-500 rounded-xl text-sm font-medium">
+              <div className="flex items-center gap-2 px-5 py-2.5 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 rounded-xl text-sm font-medium">
                 <Loader2 size={15} className="animate-spin" />
                 Đang cào...
               </div>
               <button
                 onClick={handleStop}
-                className="flex items-center gap-2 px-4 py-2.5 border border-red-200 text-red-500 hover:bg-red-50 rounded-xl text-sm font-medium transition-all"
+                className="flex items-center gap-2 px-4 py-2.5 border border-red-200 dark:border-red-800 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl text-sm font-medium transition-all"
               >
                 <Square size={13} />
                 Dừng
@@ -292,7 +292,7 @@ export default function ScraperTool() {
           {(jobState === "done" || jobState === "error") && (
             <button
               onClick={handleReset}
-              className="flex items-center gap-2 px-4 py-2.5 border rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition-all"
+              className="flex items-center gap-2 px-4 py-2.5 border dark:border-gray-600 rounded-xl text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all"
             >
               <RefreshCw size={14} />
               Làm lại
@@ -303,11 +303,11 @@ export default function ScraperTool() {
 
       {/* ── Progress ──────────────────────────────────────────────────────── */}
       {(isRunning || jobState === "done" || stats.current > 0) && (
-        <div className="border rounded-xl p-6 space-y-4 bg-white">
+        <div className="border rounded-xl p-6 space-y-4 bg-white dark:bg-gray-900 dark:border-gray-700">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-gray-700">Tiến độ</h2>
+            <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200">Tiến độ</h2>
             {stats.total > 0 && (
-              <span className="text-xs text-gray-400 font-mono">
+              <span className="text-xs text-gray-400 dark:text-gray-500 font-mono">
                 {stats.current} / {stats.total} ({progressPct}%)
               </span>
             )}
@@ -315,14 +315,14 @@ export default function ScraperTool() {
 
           {/* Progress bar */}
           {stats.total > 0 && (
-            <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+            <div className="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
               <div
                 className={`h-full rounded-full transition-all duration-300 ${
                   jobState === "error"
                     ? "bg-red-400"
                     : jobState === "done"
                     ? "bg-emerald-500"
-                    : "bg-gray-800"
+                    : "bg-gray-800 dark:bg-gray-300"
                 }`}
                 style={{ width: `${progressPct}%` }}
               />
@@ -331,32 +331,32 @@ export default function ScraperTool() {
 
           {/* Stat badges */}
           <div className="grid grid-cols-3 gap-3">
-            <div className="flex items-center gap-2.5 bg-emerald-50 border border-emerald-100 rounded-xl px-4 py-3">
+            <div className="flex items-center gap-2.5 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800 rounded-xl px-4 py-3">
               <CheckCircle2 size={16} className="text-emerald-500 shrink-0" />
               <div>
-                <p className="text-[10px] text-emerald-600 uppercase font-bold tracking-wide">Thêm mới</p>
-                <p className="text-2xl font-light text-emerald-700 leading-none mt-0.5">{stats.inserted}</p>
+                <p className="text-[10px] text-emerald-600 dark:text-emerald-400 uppercase font-bold tracking-wide">Thêm mới</p>
+                <p className="text-2xl font-light text-emerald-700 dark:text-emerald-300 leading-none mt-0.5">{stats.inserted}</p>
               </div>
             </div>
-            <div className="flex items-center gap-2.5 bg-gray-50 border border-gray-100 rounded-xl px-4 py-3">
-              <SkipForward size={16} className="text-gray-400 shrink-0" />
+            <div className="flex items-center gap-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl px-4 py-3">
+              <SkipForward size={16} className="text-gray-400 dark:text-gray-500 shrink-0" />
               <div>
-                <p className="text-[10px] text-gray-500 uppercase font-bold tracking-wide">Bỏ qua</p>
-                <p className="text-2xl font-light text-gray-700 leading-none mt-0.5">{stats.skipped}</p>
+                <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase font-bold tracking-wide">Bỏ qua</p>
+                <p className="text-2xl font-light text-gray-700 dark:text-gray-300 leading-none mt-0.5">{stats.skipped}</p>
               </div>
             </div>
-            <div className="flex items-center gap-2.5 bg-red-50 border border-red-100 rounded-xl px-4 py-3">
+            <div className="flex items-center gap-2.5 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 rounded-xl px-4 py-3">
               <XCircle size={16} className="text-red-400 shrink-0" />
               <div>
-                <p className="text-[10px] text-red-500 uppercase font-bold tracking-wide">Lỗi</p>
-                <p className="text-2xl font-light text-red-600 leading-none mt-0.5">{stats.failed}</p>
+                <p className="text-[10px] text-red-500 dark:text-red-400 uppercase font-bold tracking-wide">Lỗi</p>
+                <p className="text-2xl font-light text-red-600 dark:text-red-400 leading-none mt-0.5">{stats.failed}</p>
               </div>
             </div>
           </div>
 
           {/* Done banner */}
           {jobState === "done" && (
-            <div className="flex items-center gap-2 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-sm text-emerald-700">
+            <div className="flex items-center gap-2 p-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl text-sm text-emerald-700 dark:text-emerald-300">
               <CheckCircle2 size={16} />
               <span>
                 Hoàn tất! Đã thêm <strong>{stats.inserted}</strong> bài mới vào database.
@@ -368,10 +368,10 @@ export default function ScraperTool() {
 
       {/* ── Log terminal ──────────────────────────────────────────────────── */}
       {logs.length > 0 && (
-        <div className="border rounded-xl overflow-hidden bg-white">
+        <div className="border rounded-xl overflow-hidden bg-white dark:bg-gray-900 dark:border-gray-700">
           <button
             onClick={() => setShowLog((v) => !v)}
-            className="w-full flex items-center justify-between px-5 py-3 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors border-b"
+            className="w-full flex items-center justify-between px-5 py-3 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-b dark:border-gray-700"
           >
             <span className="flex items-center gap-2">
               <Terminal size={14} />
@@ -384,7 +384,7 @@ export default function ScraperTool() {
             <div className="bg-gray-950 text-gray-300 font-mono text-[11px] leading-relaxed p-4 h-72 overflow-y-auto">
               {logs.map((entry, i) => (
                 <div key={i} className={`py-0.5 ${logColor(entry)}`}>
-                  <span className="text-gray-600 select-none mr-2">
+                  <span className="text-gray-600 dark:text-gray-400 select-none mr-2">
                     {new Date(entry.ts).toLocaleTimeString("vi-VN", { hour12: false })}
                   </span>
                   {entry.message}
@@ -398,9 +398,9 @@ export default function ScraperTool() {
 
       {/* ── Hướng dẫn ──────────────────────────────────────────────────────── */}
       {jobState === "idle" && logs.length === 0 && (
-        <div className="border border-dashed rounded-xl p-6 space-y-2 text-center text-sm text-gray-400">
+        <div className="border border-dashed dark:border-gray-700 rounded-xl p-6 space-y-2 text-center text-sm text-gray-400 dark:text-gray-500">
           <Terminal size={24} className="mx-auto mb-3 opacity-30" />
-          <p>Chọn số bài cần cào, sau đó nhấn <strong className="text-gray-600">Bắt đầu cào</strong>.</p>
+          <p>Chọn số bài cần cào, sau đó nhấn <strong className="text-gray-600 dark:text-gray-300">Bắt đầu cào</strong>.</p>
           <p className="text-xs">
             Hệ thống sẽ tự động bỏ qua bài đã có và chỉ thêm bài mới vào database.
           </p>

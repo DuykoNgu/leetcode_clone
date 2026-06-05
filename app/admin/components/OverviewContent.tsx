@@ -2,13 +2,14 @@
 
 import ImportProblem from "./ImportProblem";
 import StatCard from "@/components/common/StatCard";
+import { DifficultyChart } from "./DifficultyChart";
 
 export function OverviewContent({
   stats,
-  onSwitchToScraper,
+  difficultyData,
 }: {
   stats: { totalUsers: number; totalProblems: number; totalSubmissions: number };
-  onSwitchToScraper: () => void;
+  difficultyData: { name: string; value: number; color: string }[];
 }) {
   return (
     <>
@@ -33,17 +34,9 @@ export function OverviewContent({
         />
       </div>
 
-      <div className="md:col-span-3 p-8 border border-dashed rounded-xl border-gray-200 dark:border-gray-800 flex flex-col items-center justify-center gap-4 bg-white dark:bg-gray-900">
-        <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
-          Thêm bài từ LeetCode nhanh hoặc dùng{" "}
-          <button
-            onClick={onSwitchToScraper}
-            className="text-blue-600 dark:text-blue-400 underline underline-offset-2 hover:text-blue-800 dark:hover:text-blue-300"
-          >
-            Scraper Tool
-          </button>{" "}
-          để cào hàng loạt.
-        </p>
+      <DifficultyChart data={difficultyData} />
+
+      <div className="mt-8 flex justify-center">
         <ImportProblem />
       </div>
     </>
