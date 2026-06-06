@@ -145,8 +145,8 @@ const ImportProblem = () => {
             </button>
             
             {loading && progress.total > 0 && (
-                <div className="text-[10px] text-gray-500 dark:text-gray-400 font-medium animate-pulse ml-1">
-                    Đang xử lý: <span className="text-blue-600 dark:text-blue-400">{progress.currentName}</span>
+                <div className="text-[10px] text-gray-500 font-medium animate-pulse ml-1">
+                    Đang xử lý: <span className="text-blue-600">{progress.currentName}</span>
                 </div>
             )}
         </div>

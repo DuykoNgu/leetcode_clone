@@ -7,8 +7,6 @@ import type {
   RegisterPayload,
   LoginPayload,
   MeResponse,
-  UpdateProfilePayload,
-  UpdateProfileResponse,
 } from "@/lib/types";
 
 export function register(payload: RegisterPayload) {
@@ -33,18 +31,6 @@ export function logout() {
 
 export function getMe() {
   return apiClient.get<MeResponse>("/me");
-}
-
-export function updateProfile(payload: UpdateProfilePayload) {
-  return apiClient.put<UpdateProfileResponse>("/me", payload);
-}
-
-export function uploadAvatar(file: File) {
-  const formData = new FormData();
-  formData.append("avatar", file);
-  return apiClient.post<UpdateProfileResponse>("/me/avatar", formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
 }
 
 export async function getAdminUsers() {

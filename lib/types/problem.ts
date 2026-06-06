@@ -14,6 +14,7 @@ export type DBProblem = {
   title: string;
   difficulty: ProblemDifficulty;
   category: string;
+  tags?: string[];
   acceptanceRate?: number;  // Optional for mock data compatibility
   order?: number;
   videoId?: string;
