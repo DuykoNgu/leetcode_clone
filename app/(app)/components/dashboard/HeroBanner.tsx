@@ -46,14 +46,15 @@ export default function HeroBanner({ isAdmin }: HeroBannerProps) {
           </p>
         </div>
 
-        {/* Nút Thảo luận */}
+        {/* Nút Tham gia thi đấu */}
         <div className="mt-4 shrink-0 sm:mt-0">
           <Button 
-            onClick={() => router.push('/discuss')}
+            onClick={() => router.push('/contest')}
             className="rounded-xl bg-white px-6 py-5 text-sm font-bold text-slate-900 shadow-lg transition-all hover:bg-slate-100 hover:shadow-white/20 active:scale-95"
           >
-            <MessageSquare className="mr-2 size-4 fill-slate-900" />
-            Thảo luận ngay
+            {/* Đổi icon tin nhắn thành cúp vàng cho hợp bối cảnh */}
+            <Trophy className="mr-2 size-4 fill-slate-900 text-slate-900" />
+            Tham gia ngay
           </Button>
         </div>
       </div>
