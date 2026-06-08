@@ -65,6 +65,14 @@ export type ProblemConstraint = {
   orderIndex?: number;
 };
 
+export type ProblemSolution = {
+  explanation: string;
+  timeComplexity?: string;
+  spaceComplexity?: string;
+  contentHtml?: string;
+  codeSnippets?: Record<string, string>;
+};
+
 export type ApiProblem = {
   id: string;
   title: string;
@@ -77,6 +85,7 @@ export type ApiProblem = {
   submissions?: Submission[];
   examples?: ProblemExample[];
   constraints?: ProblemConstraint[];
+  solution?: ProblemSolution;
   isSolved?: boolean;
 };
 

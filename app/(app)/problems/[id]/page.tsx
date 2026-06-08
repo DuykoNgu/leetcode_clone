@@ -9,7 +9,7 @@ import ProblemHeader from "../components/ProblemHeader";
 import { Loader2, MessageSquare, History, FileText } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
-import { EditorialTab, SubmissionsTab } from "../components/ProblemTabs";
+import { EditorialTab, SubmissionsTab } from "./components/ProblemTabs";
 import { TabButton } from "@/components/common/TabButton";
 import { toast } from "sonner";
 
@@ -190,7 +190,7 @@ export default function ProblemDetailPage({ params }: { params: Promise<{ id: st
 
   return (
     <div className="flex h-[calc(100vh-60px)] flex-col overflow-hidden bg-[#f1f5f9]">
-      <ProblemHeader title={`${problem.id}. ${problem.title}`} />
+      <ProblemHeader title={problem.title} />
       
       <main className="flex flex-1 min-h-0 gap-4 p-4">
         {/* Left Column: Tabs & Content (40%) */}
