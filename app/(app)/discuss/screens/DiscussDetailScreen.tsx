@@ -82,7 +82,10 @@ export default function DiscussDetailScreen({ id }: { id: string }) {
       await deleteDiscussionPost(id);
       toast.success("Đã xóa bài viết!", { id: "delPost" });
       router.push('/discuss');
-    } catch (error: any) { toast.error("Lỗi khi xóa", { id: "delPost" }); } 
+    } catch (error: any) { 
+      // Sửa dòng dưới đây:
+      toast.error(error.response?.data?.message || "Lỗi khi xóa", { id: "delPost" }); 
+    } 
     finally { setIsDeleteModalOpen(false); }
   };
 
@@ -146,9 +149,12 @@ export default function DiscussDetailScreen({ id }: { id: string }) {
       await deleteComment(id, commentToDelete);
       fetchDetail();
       toast.success("Đã xóa bình luận!", { id: "delCmt" });
-    } catch (error: any) { toast.error("Lỗi khi xóa", { id: "delCmt" }); } 
+    } catch (error: any) { 
+      // Sửa dòng dưới đây:
+      toast.error(error.response?.data?.message || "Lỗi khi xóa", { id: "delCmt" }); 
+    } 
     finally { setCommentToDelete(null); }
-  };
+  };;
 
   const submitEditComment = async (commentId: string) => {
     if (!editCommentContent.trim()) return;

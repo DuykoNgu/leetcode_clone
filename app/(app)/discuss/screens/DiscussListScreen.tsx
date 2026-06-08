@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { MessageSquare, TrendingUp, Plus, Search, ChevronUp, ChevronDown, Hash, Bookmark, Loader2 } from "lucide-react";
+import { MessageSquare, TrendingUp, Plus, Search, ChevronUp, ChevronDown, Hash, Bookmark, Loader2, Pin } from "lucide-react";  
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
@@ -85,7 +85,7 @@ export default function DiscussListScreen() {
 
                   <div className="flex-1 flex flex-col justify-center">
                     <div className="mb-2 flex items-center gap-2">
-                      {discuss.isPinned && <span className="rounded bg-brand-orange px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">Đã ghim</span>}
+                      {discuss.isPinned && <span className="bg-brand-orange text-white text-[9px] font-bold px-1.5 py-0.5 rounded uppercase flex items-center gap-1 shrink-0"><Pin className="size-2.5" /> Đã ghim</span>}
                       <span className="text-xs font-medium text-slate-500">Đăng bởi <span className="font-bold text-slate-800">{discuss.user.username}</span></span>
                       <span className="text-slate-300 text-xs">•</span><span className="text-xs font-medium text-slate-400">{new Date(discuss.createdAt).toLocaleDateString()}</span>
                     </div>
