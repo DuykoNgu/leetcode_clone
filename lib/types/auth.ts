@@ -5,6 +5,7 @@ export type AuthUser = {
   role: string;
   createdAt?: string;
   avatarUrl?: string | null;
+  birthday?: string | null;
   solvedCount?: number;
   streakDays?: number;
   lastActive?: string | null;
@@ -48,6 +49,20 @@ export type LoginPayload = {
 };
 
 export type MeResponse = {
+  data: {
+    user: AuthUser;
+  };
+};
+
+export type UpdateProfilePayload = {
+  username?: string;
+  email?: string;
+  avatarUrl?: string | null;
+  birthday?: string | null;
+};
+
+export type UpdateProfileResponse = {
+  success: boolean;
   data: {
     user: AuthUser;
   };

@@ -20,7 +20,7 @@ type ListQuestionProps = {
 
 export default function ListQuestion({
   searchQuery = "",
-  categoryFilter,
+  categoryFilter = "algorithms",
   difficultyFilter,
   onProblemSelect,
 }: ListQuestionProps) {
@@ -29,7 +29,7 @@ export default function ListQuestion({
   const [localSearch, setLocalSearch] = useState("");
   const debouncedSearch = useDebounce(localSearch, 500);
   const [showSearch, setShowSearch] = useState(false);
-  const [localCategory, setLocalCategory] = useState<ProblemCategory>("all-code-essentials");
+  const [localCategory, setLocalCategory] = useState<ProblemCategory>("algorithms");
   const [localDifficulty, setLocalDifficulty] = useState<string>("");
   const [solvedProblemIds, setSolvedProblemIds] = useState<Set<string>>(new Set());
   const [problems, setProblems] = useState<DBProblem[]>([]);
@@ -66,14 +66,11 @@ export default function ListQuestion({
           if (problem.isSolved) {
             solvedIds.add(problem.id);
           }
-          // THÊM: Bóc tách mảng tags
-          const tagsArray = problem.problemTags?.map((pt: any) => pt.tag.name) || ["Algorithms"];
           return {
             id: problem.id,
             title: problem.title,
             difficulty: difficultyMap[problem.difficulty] || "Medium",
             category: "algorithms",
-            tags: tagsArray,
             order: 0,
             acceptanceRate: Number(problem.acceptanceRate),
             createdAt: problem.createdAt,
@@ -95,9 +92,7 @@ export default function ListQuestion({
   const filteredProblems = useMemo(() => {
     return [...problems].sort((a, b) => {
       if (sortBy === "default") {
-       const idA = parseInt(a.id) || 0;
-        const idB = parseInt(b.id) || 0;
-        return idA - idB;
+        return (a.order ?? 0) - (b.order ?? 0);
       }
 
       if (sortBy === "difficulty") {

@@ -1,2 +1,2 @@
-export type { AuthUser, AuthSuccessResponse, RefreshTokenResponse, RegisterPayload, LoginPayload, MeResponse } from "./auth";
+export type { AuthUser, AuthSuccessResponse, RefreshTokenResponse, RegisterPayload, LoginPayload, MeResponse, UpdateProfilePayload, UpdateProfileResponse } from "./auth";
 export type { ProblemDifficulty, ProblemCategory, DBProblem, ApiProblem, ProblemsResponse, Submission } from "./problem";
