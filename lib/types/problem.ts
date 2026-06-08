@@ -80,6 +80,17 @@ export type ApiProblem = {
   isSolved?: boolean;
 };
 
+export type UpdateProblemPayload = {
+  title?: string;
+  description?: string;
+  difficulty?: number;
+  codeTemplates?: { language: string; starterCode: string; solutionCode?: string }[];
+  testCases?: { input: string; expectedOutput: string; isHidden?: boolean }[];
+  examples?: { input: string; output: string; explanation?: string }[];
+  constraints?: { content: string }[];
+  problemTags?: { tag: { name: string; slug: string } }[];
+};
+
 export type ProblemsResponse = {
   message: string;
   data: ApiProblem[];

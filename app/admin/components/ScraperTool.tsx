@@ -219,6 +219,13 @@ export default function ScraperTool() {
 
   return (
     <div className="space-y-6">
+      <div className="mb-2">
+        <h2 className="text-base font-semibold text-gray-800 dark:text-gray-200">Scraper Tool</h2>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+          Cào bài tập từ LeetCode theo số lượng và danh mục tùy chọn. Hệ thống chạy nền,
+          bạn có thể theo dõi tiến độ real-time bên dưới.
+        </p>
+      </div>
       {/* ── Cấu hình ────────────────────────────────────────────────────────── */}
       <div className="border rounded-xl p-6 space-y-6 bg-white dark:bg-gray-900 dark:border-gray-700">
         <div className="flex items-center gap-2">

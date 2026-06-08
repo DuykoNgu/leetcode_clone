@@ -1,6 +1,5 @@
 "use client";
 
-import ImportProblem from "./ImportProblem";
 import StatCard from "@/components/common/StatCard";
 import { DifficultyChart } from "./DifficultyChart";
 
@@ -35,10 +34,6 @@ export function OverviewContent({
       </div>
 
       <DifficultyChart data={difficultyData} />
-
-      <div className="mt-8 flex justify-center">
-        <ImportProblem />
-      </div>
     </>
   );
 }
