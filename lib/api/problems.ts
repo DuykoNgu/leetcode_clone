@@ -39,11 +39,3 @@ export const runCode = async (
   });
   return response.data;
 };
-export const getRandomProblem = async (): Promise<string | null> => {
-  try {
-    const response = await apiClient.get("/problems/random");
-    return response.data.data.id;
-  } catch (error) {
-    throw error;
-  }
-};

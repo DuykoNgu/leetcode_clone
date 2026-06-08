@@ -150,16 +150,9 @@ export default function TableQuestion({
                         <span className="text-[15px] font-semibold text-slate-700 group-hover:text-brand-orange transition-colors">
                           {index + 1}. {problem.title}
                         </span>
-                        <div className="flex flex-wrap gap-1.5 mt-1.5">
-                          {problem.tags?.map((tag, i) => (
-                            <span 
-                              key={i} 
-                              className="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded font-medium tracking-wide"
-                            >
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
+                        <span className="text-[11px] text-slate-400 font-medium">
+                          Thuật toán
+                        </span>
                       </div>
                     </TableCell>
                     <TableCell className="py-4">

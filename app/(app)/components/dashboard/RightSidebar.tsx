@@ -1,10 +1,9 @@
 "use client";
-import { useState } from "react";
+
 import { useRouter } from "next/navigation";
-import { Flame, Trophy, Shuffle, MessageCircleHeart, Loader2 } from "lucide-react";
+import { Flame, Trophy, Shuffle, MessageCircleHeart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { getRandomProblem } from "@/lib/api/problems";
 
 interface RightSidebarProps {
   authUser: any;
@@ -12,32 +11,13 @@ interface RightSidebarProps {
 
 export default function RightSidebar({ authUser }: RightSidebarProps) {
   const router = useRouter();
-  const [isPicking, setIsPicking] = useState(false);
-
-  // Hàm xử lý khi bấm nút Pick One
-  const handlePickOne = async () => {
-    setIsPicking(true);
-    toast.loading("Đang tìm kiếm thử thách phù hợp...", { id: "pickOne" });
-    try {
-      const problemId = await getRandomProblem();
-      if (problemId) {
-        toast.success("Đã tìm thấy bài!", { id: "pickOne" });
-        router.push(`/problems/${problemId}`);
-      }
-    } catch (error: any) {
-      const errMsg = error.response?.data?.message || "Lỗi khi tìm bài tập ngẫu nhiên";
-      toast.error(errMsg, { id: "pickOne" });
-    } finally {
-      setIsPicking(false);
-    }
-  };
 
   return (
     <div className="flex flex-col gap-6">
       
       {/* 1. THẺ STREAK (Khôi phục UI đẹp) */}
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h3 className="mb-5 text-sm font-bold uppercase tracking-widest text-slate-400">Streak</h3>
+        <h3 className="mb-5 text-sm font-bold uppercase tracking-widest text-slate-400">Chỉ số sức mạnh</h3>
         
         <div className="mb-6 flex items-center gap-4">
           <div className="flex size-14 items-center justify-center rounded-2xl bg-orange-100 text-brand-orange">
@@ -65,7 +45,7 @@ export default function RightSidebar({ authUser }: RightSidebarProps) {
         </div>
       </div>
 
-      {/* 2. THẺ PICK ONE */}
+      {/* 2. THẺ PICK ONE (Thiết kế mới) */}
       <div className="group relative overflow-hidden rounded-2xl border border-brand-orange/20 bg-gradient-to-b from-orange-50/50 to-white p-6 shadow-sm transition-all hover:shadow-md">
         <div className="mb-4 flex items-center gap-3">
           <div className="flex size-10 items-center justify-center rounded-xl bg-brand-orange text-white shadow-inner">
@@ -77,12 +57,10 @@ export default function RightSidebar({ authUser }: RightSidebarProps) {
           Không biết nên bắt đầu từ đâu? Hãy để hệ thống chọn ngẫu nhiên một thử thách cho bạn.
         </p>
         <Button 
-          onClick={handlePickOne} 
-          disabled={isPicking} // <--- Khóa nút khi đang load
-          className="w-full bg-slate-900 font-bold text-white transition-all hover:bg-brand-orange hover:shadow-lg hover:shadow-orange-500/20 disabled:opacity-70"
+          onClick={() => toast.info("Đang tìm kiếm bài tập phù hợp...")} 
+          className="w-full bg-slate-900 font-bold text-white transition-all hover:bg-brand-orange hover:shadow-lg hover:shadow-orange-500/20"
         >
-          {isPicking ? <Loader2 className="mr-2 size-4 animate-spin" /> : null}
-          {isPicking ? "Đang xóc đĩa..." : "Chọn bài ngẫu nhiên"}
+          Chọn bài ngẫu nhiên
         </Button>
       </div>
 
