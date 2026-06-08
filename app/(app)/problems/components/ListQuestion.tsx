@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useDebounce } from "@/hooks/useDebounce";
 import { getProblems } from "@/lib/api/problems";
@@ -46,18 +46,12 @@ export default function ListQuestion({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const sortFieldMap: Record<string, string> = {
-          default: "id",
-          difficulty: "difficulty",
-          acceptance: "acceptanceRate",
-        };
         const params: any = {
           category: effectiveCategory === "all-code-essentials" ? undefined : effectiveCategory,
           difficulty: effectiveDifficulty || undefined,
+          search: effectiveSearch || undefined,
           page,
-          limit: 50,
-          sortBy: sortFieldMap[sortBy],
-          sortOrder: sortDirection,
+          limit: 10,
         };
         const response = await getProblems(params);
 
@@ -98,17 +92,9 @@ export default function ListQuestion({
       }
     };
     fetchData();
-  }, [isAuthenticated, effectiveSearch, effectiveCategory, effectiveDifficulty, page, sortBy, sortDirection]);
+  }, [isAuthenticated, effectiveSearch, effectiveCategory, effectiveDifficulty, page]);
 
-  useEffect(() => { setPage(1); }, [effectiveSearch, effectiveCategory, effectiveDifficulty, sortBy, sortDirection]);
-
-  const filteredProblems = useMemo(() => {
-    const q = effectiveSearch.toLowerCase();
-    if (!q) return problems;
-    return problems.filter((p) =>
-      p.title.toLowerCase().includes(q) || p.id.includes(q)
-    );
-  }, [problems, effectiveSearch]);
+  useEffect(() => { setPage(1); }, [effectiveSearch, effectiveCategory, effectiveDifficulty]);
 
   useEffect(() => { if (page > totalPages) setPage(totalPages || 1); }, [page, totalPages]);
 
@@ -153,7 +139,7 @@ export default function ListQuestion({
       <div className="flex-1 overflow-y-auto scrollbar-hide">
         <div className="max-w-7xl mx-auto py-4">
           <TableQuestion
-            problems={filteredProblems}
+            problems={problems}
             totalCount={totalCount}
             solvedProblemIds={solvedProblemIds}
             onProblemSelect={onProblemSelect || (() => {})}

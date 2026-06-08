@@ -35,7 +35,7 @@ const difficultyStyles: Record<string, string> = {
   Hard: "bg-rose-50 text-rose-600 border-none",
 };
 
-const PAGE_SIZE = 50;
+const PAGE_SIZE = 10;
 
 export default function TableQuestion({
   problems,
@@ -152,7 +152,7 @@ export default function TableQuestion({
                     <TableCell className="py-4">
                       <div className="flex flex-col">
                         <span className="text-[15px] font-semibold text-slate-700 group-hover:text-brand-orange transition-colors">
-                          <span className="text-slate-400 mr-1.5">{problem.id}.</span>
+                          <span className="text-slate-400 mr-1.5">{(page - 1) * PAGE_SIZE + index + 1}.</span>
                           {problem.title}
                         </span>
                         <span className="text-[11px] text-slate-400 font-medium">
