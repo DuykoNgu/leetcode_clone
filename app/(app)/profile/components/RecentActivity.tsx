@@ -21,6 +21,7 @@ export function RecentActivity({ user }: { user: AuthUser }) {
       <div className="flex border-b border-gray-200 bg-gray-50/50">
         {tabs.map((tab, i) => (
           <button
+            type="button"
             key={tab}
             className={`px-6 py-3 text-sm font-medium transition-colors ${
               i === 0 

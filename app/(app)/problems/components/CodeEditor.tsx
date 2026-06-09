@@ -152,6 +152,7 @@ export default function CodeEditor({
         isConsoleOpen ? "h-64" : "h-10"
       )}>
         <button 
+          type="button"
           onClick={toggleConsole}
           className="flex w-full items-center justify-between px-4 py-2.5 text-slate-400 hover:bg-slate-900 border-b border-slate-800 bg-slate-950"
         >

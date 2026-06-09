@@ -9,7 +9,7 @@ export default function AdminPage() {
                 Loading Dashboard...
             </div>
         }>
-            <ProtectedRoute role="admin">
+            <ProtectedRoute requiredRole="admin">
                 <AdminDashboard />
             </ProtectedRoute>
         </Suspense>

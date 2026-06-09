@@ -54,6 +54,7 @@ export function ProfileInfo({ user, onUpdate }: ProfileInfoProps) {
       <div className="p-2">
         <div className="flex flex-col items-center sm:flex-row sm:items-start gap-4">
           <button
+            type="button"
             onClick={() => { if (user.avatarUrl) { setShowAvatarPreview(true); setImgZoom(1); } }}
             disabled={!user.avatarUrl}
             className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-gray-100 border border-gray-200 disabled:cursor-default cursor-pointer"
@@ -121,10 +122,12 @@ export function ProfileInfo({ user, onUpdate }: ProfileInfoProps) {
       {showAvatarPreview && user.avatarUrl && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <button
+            type="button"
             className="absolute inset-0 bg-black/85"
             onClick={() => setShowAvatarPreview(false)}
           />
           <button
+            type="button"
             className="absolute top-4 right-4 text-white/70 hover:text-white z-10"
             onClick={() => setShowAvatarPreview(false)}
           >

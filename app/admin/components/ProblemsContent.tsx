@@ -129,6 +129,7 @@ export function ProblemsContent({
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <button
+                        type="button"
                         onClick={() => handleEdit(p.id)}
                         disabled={loadingEdit === p.id}
                         className="flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 disabled:opacity-50 transition-colors"
@@ -137,6 +138,7 @@ export function ProblemsContent({
                         {loadingEdit === p.id ? "Loading..." : "Edit"}
                       </button>
                       <button
+                        type="button"
                         onClick={() => setDeleteTarget({ id: p.id, title: p.title })}
                         disabled={deletingId === p.id}
                         className="flex items-center gap-1 text-xs font-medium text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 disabled:opacity-50 transition-colors"
@@ -155,6 +157,7 @@ export function ProblemsContent({
         {totalPages > 1 && (
           <div className="flex items-center justify-center gap-2">
             <button
+              type="button"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
               className="flex items-center gap-1 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-40 transition-colors"
@@ -166,9 +169,10 @@ export function ProblemsContent({
               .map((p, idx, arr) => (
                 <span key={p} className="flex items-center gap-1">
                   {idx > 0 && arr[idx - 1] !== p - 1 && <span className="text-gray-300 px-1">...</span>}
-                  <button
-                    onClick={() => setPage(p)}
-                    className={`min-w-[32px] rounded-lg px-2.5 py-1.5 text-xs font-bold transition-colors ${
+                   <button
+                     type="button"
+                     onClick={() => setPage(p)}
+                     className={`min-w-[32px] rounded-lg px-2.5 py-1.5 text-xs font-bold transition-colors ${
                       p === page
                         ? "bg-brand-orange text-white shadow-sm"
                         : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
@@ -179,6 +183,7 @@ export function ProblemsContent({
                 </span>
               ))}
             <button
+              type="button"
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
               className="flex items-center gap-1 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-40 transition-colors"
