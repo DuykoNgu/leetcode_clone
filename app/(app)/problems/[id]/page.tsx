@@ -15,6 +15,12 @@ import { toast } from "sonner";
 
 type Tab = "description" | "editorial" | "submissions";
 
+const difficultyMap: Record<number, "Easy" | "Medium" | "Hard"> = {
+  0: "Easy",
+  1: "Medium",
+  2: "Hard",
+};
+
 export default function ProblemDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
@@ -173,6 +179,7 @@ export default function ProblemDetailPage({ params }: { params: Promise<{ id: st
       <div className="flex h-[calc(100vh-60px)] flex-col items-center justify-center gap-4 bg-white text-rose-500">
         <p className="text-lg font-semibold">{error || "Bài tập không tồn tại."}</p>
         <button 
+          type="button"
           onClick={() => router.push("/problems")}
           className="text-sm font-bold text-brand-orange hover:underline"
         >
@@ -181,12 +188,6 @@ export default function ProblemDetailPage({ params }: { params: Promise<{ id: st
       </div>
     );
   }
-
-  const difficultyMap: Record<number, "Easy" | "Medium" | "Hard"> = {
-    0: "Easy",
-    1: "Medium",
-    2: "Hard",
-  };
 
   return (
     <div className="flex h-[calc(100vh-60px)] flex-col overflow-hidden bg-[#f1f5f9]">

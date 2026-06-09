@@ -66,6 +66,7 @@ export default function FilterSection({
           <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-xl">
             {CATEGORIES.slice(0, 5).map((cat) => (
               <button
+                type="button"
                 key={cat.value}
                 onClick={() => onCategoryChange(cat.value as ProblemCategory)}
                 className={cn(
@@ -86,6 +87,7 @@ export default function FilterSection({
           <div className="flex items-center gap-2">
             {(["Easy", "Medium", "Hard"] as const).map((diff) => (
               <button
+                type="button"
                 key={diff}
                 onClick={() => onDifficultyChange(diff)}
                 className={cn(
@@ -108,6 +110,7 @@ export default function FilterSection({
             <div className="flex items-center gap-1">
               {(["difficulty", "acceptance"] as const).map((opt) => (
                 <button
+                  type="button"
                   key={opt}
                   onClick={() => onSortToggle(opt)}
                   className={cn(

@@ -151,6 +151,7 @@ export default function ListQuestion({
           {totalPages > 1 && (
             <div className="flex items-center justify-center gap-2 mt-6">
               <button
+                type="button"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
                 className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-40 transition-colors"
@@ -163,6 +164,7 @@ export default function ListQuestion({
                   <span key={p} className="flex items-center gap-1">
                     {idx > 0 && arr[idx - 1] !== p - 1 && <span className="text-slate-300 px-1">...</span>}
                     <button
+                      type="button"
                       onClick={() => setPage(p)}
                       className={`min-w-[32px] rounded-lg px-2.5 py-1.5 text-xs font-bold transition-colors ${
                         p === page
@@ -175,6 +177,7 @@ export default function ListQuestion({
                   </span>
                 ))}
               <button
+                type="button"
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
                 className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-40 transition-colors"

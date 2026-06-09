@@ -79,6 +79,7 @@ export function AdminLayout({
         </div>
 
         <button
+          type="button"
           onClick={() => setSidebarOpen(!sidebarOpen)}
           className="absolute bottom-0 left-0 right-0 border-t border-gray-200 dark:border-gray-800 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800"
         >
@@ -114,6 +115,7 @@ export function AdminLayout({
             </div>
             <div className="flex items-center gap-3">
               <button
+                type="button"
                 onClick={() => setTheme(isDark ? "light" : "dark")}
                 className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                 title={isDark ? "Light mode" : "Dark mode"}
@@ -121,6 +123,7 @@ export function AdminLayout({
                 {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
               </button>
               <button
+                type="button"
                 onClick={() => router.push("/")}
                 className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                 title="Về trang chủ"
@@ -128,6 +131,7 @@ export function AdminLayout({
                 <Home className="h-4 w-4" />
               </button>
               <button
+                type="button"
                 onClick={onLogout}
                 className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 transition-colors"
                 title="Logout"
@@ -167,6 +171,7 @@ function SidebarItem({
 
   return (
     <button
+      type="button"
       onClick={() => setSelected(id)}
       className={`relative flex h-11 w-full items-center rounded-md transition-all duration-200 ${
         isSelected

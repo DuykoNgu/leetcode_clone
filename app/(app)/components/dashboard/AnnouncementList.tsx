@@ -189,7 +189,7 @@ export default function AnnouncementList({ isAdmin }: AnnouncementListProps) {
               <h3 className="text-lg font-bold text-slate-900">
                 {editingId ? "Chỉnh sửa thông báo" : "Tạo thông báo mới"}
               </h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-rose-500 transition-colors">
+              <button type="button" onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-rose-500 transition-colors">
                 <X className="size-5" />
               </button>
             </div>

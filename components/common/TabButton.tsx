@@ -13,6 +13,7 @@ export function TabButton({
 }) {
   return (
     <button
+      type="button"
       onClick={onClick}
       className={cn(
         "group relative flex items-center gap-2 px-4 py-3 text-xs font-bold transition-all duration-150",

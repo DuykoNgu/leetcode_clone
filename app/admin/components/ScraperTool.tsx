@@ -162,7 +162,11 @@ export default function ScraperTool() {
         }));
         appendLog({ type: "done", message: data.message, ts: Date.now() });
         es.close();
-        toast.success(`Hoàn tất! +${data.inserted} bài mới`);
+        if (data.stopped) {
+          toast.info(`Đã dừng. Đã thêm ${data.inserted} bài mới.`);
+        } else {
+          toast.success(`Hoàn tất! +${data.inserted} bài mới`);
+        }
       },
       onError: (data) => {
         setJobState("error");
@@ -271,6 +275,7 @@ export default function ScraperTool() {
         <div className="flex items-center gap-3 pt-2 border-t dark:border-gray-700">
           {!isRunning && jobState !== "done" && (
             <button
+              type="button"
               onClick={handleStart}
               disabled={isRunning}
               className="flex items-center gap-2 px-5 py-2.5 bg-gray-900 hover:bg-gray-700 dark:bg-blue-600 dark:hover:bg-blue-700 text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 shadow-sm"
@@ -287,6 +292,7 @@ export default function ScraperTool() {
                 Đang cào...
               </div>
               <button
+                type="button"
                 onClick={handleStop}
                 className="flex items-center gap-2 px-4 py-2.5 border border-red-200 dark:border-red-800 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl text-sm font-medium transition-all"
               >
@@ -298,6 +304,7 @@ export default function ScraperTool() {
 
           {(jobState === "done" || jobState === "error") && (
             <button
+              type="button"
               onClick={handleReset}
               className="flex items-center gap-2 px-4 py-2.5 border dark:border-gray-600 rounded-xl text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all"
             >
@@ -366,7 +373,9 @@ export default function ScraperTool() {
             <div className="flex items-center gap-2 p-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl text-sm text-emerald-700 dark:text-emerald-300">
               <CheckCircle2 size={16} />
               <span>
-                Hoàn tất! Đã thêm <strong>{stats.inserted}</strong> bài mới vào database.
+                {stats.inserted > 0
+                  ? `Hoàn tất! Đã thêm ${stats.inserted} bài mới vào database.`
+                  : "Đã dừng. Không có bài mới nào được thêm."}
               </span>
             </div>
           )}
@@ -377,6 +386,7 @@ export default function ScraperTool() {
       {logs.length > 0 && (
         <div className="border rounded-xl overflow-hidden bg-white dark:bg-gray-900 dark:border-gray-700">
           <button
+            type="button"
             onClick={() => setShowLog((v) => !v)}
             className="w-full flex items-center justify-between px-5 py-3 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-b dark:border-gray-700"
           >

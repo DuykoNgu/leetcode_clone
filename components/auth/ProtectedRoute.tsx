@@ -7,13 +7,13 @@ import { toast } from "sonner";
 
 interface ProtectedRouteProps {
   children: ReactNode;
-  role?: "admin" | "user";
+  requiredRole?: "admin" | "user";
   redirectTo?: string;
 }
 
 export default function ProtectedRoute({
   children,
-  role,
+  requiredRole,
   redirectTo = "/",
 }: ProtectedRouteProps) {
   const { authUser, isLoading, isAuthenticated } = useAuth();
@@ -28,12 +28,12 @@ export default function ProtectedRoute({
       return;
     }
 
-    if (role && authUser?.role !== role) {
+    if (requiredRole && authUser?.role !== requiredRole) {
       toast.error("Bạn không có quyền truy cập trang này");
-      router.replace(role === "admin" ? "/problems" : "/");
+      router.replace(requiredRole === "admin" ? "/problems" : "/");
       return;
     }
-  }, [isLoading, isAuthenticated, authUser, role, router, redirectTo]);
+  }, [isLoading, isAuthenticated, authUser, requiredRole, router, redirectTo]);
 
   if (isLoading) {
     return (
@@ -44,7 +44,7 @@ export default function ProtectedRoute({
   }
 
   // If not authenticated or wrong role, show nothing (redirect will happen in useEffect)
-  if (!isAuthenticated || (role && authUser?.role !== role)) {
+  if (!isAuthenticated || (requiredRole && authUser?.role !== requiredRole)) {
     return null;
   }
 

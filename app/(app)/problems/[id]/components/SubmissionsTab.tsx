@@ -42,6 +42,7 @@ export function SubmissionsTab({
               const isAccepted = sub.status === "accepted";
               return (
                 <button
+                  type="button"
                   key={sub.id}
                   onClick={() => onViewSubmission?.(sub)}
                   className={cn(
