@@ -73,7 +73,7 @@ export default function ListQuestion({
         const mappedData: DBProblem[] = response.data.map((problem: any) => {
           if (problem.isSolved) solvedIds.add(problem.id);
           return {
-            id: problem.id,
+            id: problem.slug || problem.id,
             title: problem.title,
             difficulty: difficultyMap[problem.difficulty] || "Medium",
             category: "algorithms",

@@ -78,7 +78,10 @@ export default function ProblemDetailPage({ params }: { params: Promise<{ id: st
       if (result.success) {
         toast.success("Chạy code hoàn thành!");
       } else {
-        toast.error(`Chạy code thất bại: ${result.status.replace("_", " ").toUpperCase()}`);
+        const statusText = result.status 
+          ? result.status.replace(/_/g, " ").toUpperCase() 
+          : "LỖI KHÔNG XÁC ĐỊNH";
+        toast.error(`Chạy code thất bại: ${statusText}`);
       }
       await fetchDetail(false);
     } catch (err: any) {
@@ -112,7 +115,10 @@ export default function ProblemDetailPage({ params }: { params: Promise<{ id: st
         setActiveTab("submissions");
         refreshUser();
       } else {
-        toast.error(`Nộp bài thất bại: ${result.status.replace("_", " ").toUpperCase()}`);
+        const statusText = result.status 
+          ? result.status.replace(/_/g, " ").toUpperCase() 
+          : "LỖI KHÔNG XÁC ĐỊNH";
+        toast.error(`Nộp bài thất bại: ${statusText}`);
       }
       await fetchDetail(false);
     } catch (err: any) {

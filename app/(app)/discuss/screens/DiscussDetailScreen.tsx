@@ -82,7 +82,10 @@ export default function DiscussDetailScreen({ id }: { id: string }) {
       await deleteDiscussionPost(id);
       toast.success("Đã xóa bài viết!", { id: "delPost" });
       router.push('/discuss');
-    } catch (error: any) { toast.error("Lỗi khi xóa", { id: "delPost" }); } 
+    } catch (error: any) { 
+      // Sửa dòng dưới đây:
+      toast.error(error.response?.data?.message || "Lỗi khi xóa", { id: "delPost" }); 
+    } 
     finally { setIsDeleteModalOpen(false); }
   };
 
@@ -146,9 +149,12 @@ export default function DiscussDetailScreen({ id }: { id: string }) {
       await deleteComment(id, commentToDelete);
       fetchDetail();
       toast.success("Đã xóa bình luận!", { id: "delCmt" });
-    } catch (error: any) { toast.error("Lỗi khi xóa", { id: "delCmt" }); } 
+    } catch (error: any) { 
+      // Sửa dòng dưới đây:
+      toast.error(error.response?.data?.message || "Lỗi khi xóa", { id: "delCmt" }); 
+    } 
     finally { setCommentToDelete(null); }
-  };
+  };;
 
   const submitEditComment = async (commentId: string) => {
     if (!editCommentContent.trim()) return;
@@ -186,7 +192,7 @@ export default function DiscussDetailScreen({ id }: { id: string }) {
   return (
     <div className="min-h-[calc(100vh-60px)] bg-[#f8fafc] py-8 px-4 sm:px-6 relative">
       <div className="mx-auto max-w-4xl">
-        <button type="button" onClick={() => router.push('/discuss')} className="mb-6 flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-emerald-600 transition-colors">
+        <button onClick={() => router.push('/discuss')} className="mb-6 flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-emerald-600 transition-colors">
           <ArrowLeft className="size-4" /> Quay lại danh sách
         </button>
 
@@ -228,9 +234,9 @@ export default function DiscussDetailScreen({ id }: { id: string }) {
           <div className="border-t border-slate-100 bg-slate-50/30 p-4 sm:px-8 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="flex items-center rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden h-10">
-                <button type="button" onClick={() => handleInteract('upvote')} className={cn("flex h-full items-center gap-1.5 px-4 font-bold transition-colors hover:bg-slate-50", isUpvoted ? "text-emerald-600 bg-emerald-50" : "text-slate-500")}><ChevronUp className="size-5" /> <span>{discuss.upvotes}</span></button>
+                <button onClick={() => handleInteract('upvote')} className={cn("flex h-full items-center gap-1.5 px-4 font-bold transition-colors hover:bg-slate-50", isUpvoted ? "text-emerald-600 bg-emerald-50" : "text-slate-500")}><ChevronUp className="size-5" /> <span>{discuss.upvotes}</span></button>
                 <div className="w-px h-full bg-slate-200" />
-                <button type="button" onClick={() => handleInteract('downvote')} className={cn("flex h-full items-center px-3 font-bold transition-colors hover:bg-slate-50", isDownvoted ? "text-rose-600 bg-rose-50" : "text-slate-400 hover:text-rose-500")}><ChevronDown className="size-5" /></button>
+                <button onClick={() => handleInteract('downvote')} className={cn("flex h-full items-center px-3 font-bold transition-colors hover:bg-slate-50", isDownvoted ? "text-rose-600 bg-rose-50" : "text-slate-400 hover:text-rose-500")}><ChevronDown className="size-5" /></button>
               </div>
             </div>
             <Button onClick={() => handleInteract('save')} variant="outline" className={cn("h-10 rounded-xl font-bold shadow-sm gap-2 transition-all", isSaved ? "bg-amber-100 text-amber-700 border-amber-200" : "text-slate-600")}><Bookmark className={cn("size-4", isSaved && "fill-current")} /><span className="hidden sm:inline">{isSaved ? "Đã lưu" : "Lưu bài"}</span></Button>
@@ -246,7 +252,7 @@ export default function DiscussDetailScreen({ id }: { id: string }) {
               {replyingTo && (
                 <div className="flex items-center gap-2 mb-2 ml-14 text-sm font-medium text-emerald-600 bg-emerald-50 w-fit px-3 py-1 rounded-full border border-emerald-100">
                   <Reply className="size-3.5" /> Đang trả lời <strong>{replyingTo.username}</strong>
-                  <button type="button" onClick={() => { setReplyingTo(null); setCommentText(""); }} className="ml-2 hover:text-rose-500"><X className="size-3.5" /></button>
+                  <button onClick={() => { setReplyingTo(null); setCommentText(""); }} className="ml-2 hover:text-rose-500"><X className="size-3.5" /></button>
                 </div>
               )}
               <form onSubmit={handleCommentSubmit} className="flex gap-3 sm:gap-4">
@@ -292,10 +298,10 @@ export default function DiscussDetailScreen({ id }: { id: string }) {
                            <span className="text-xs font-medium text-slate-400">• {new Date(c.createdAt).toLocaleString()}</span>
                          </div>
                          <div className="opacity-0 group-hover:opacity-100 flex items-center gap-1 transition-all">
-                            {!isReply && authUser?.id === discuss.userId && <button type="button" onClick={() => handlePinCommentAction(c.id)} className={cn("p-1.5 rounded-lg transition-colors", c.isPinned ? "text-brand-orange hover:bg-orange-100" : "text-slate-400 hover:text-brand-orange hover:bg-orange-50")} title="Ghim bình luận"><Pin className="size-4" /></button>}
-                            <button type="button" onClick={() => initiateReply(!isReply ? c.id : c.parentId, c.user.username)} className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors" title="Trả lời"><Reply className="size-4" /></button>
-                            {canEditComment && !isEditing && <button type="button" onClick={() => { setEditingCommentId(c.id); setEditCommentContent(c.content); }} className="p-1.5 text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" title="Sửa"><Edit className="size-4" /></button>}
-                            {canDeleteComment && <button type="button" onClick={() => setCommentToDelete(c.id)} className="p-1.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors" title="Xóa"><Trash2 className="size-4" /></button>}
+                            {!isReply && authUser?.id === discuss.userId && <button onClick={() => handlePinCommentAction(c.id)} className={cn("p-1.5 rounded-lg transition-colors", c.isPinned ? "text-brand-orange hover:bg-orange-100" : "text-slate-400 hover:text-brand-orange hover:bg-orange-50")} title="Ghim bình luận"><Pin className="size-4" /></button>}
+                            <button onClick={() => initiateReply(!isReply ? c.id : c.parentId, c.user.username)} className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors" title="Trả lời"><Reply className="size-4" /></button>
+                            {canEditComment && !isEditing && <button onClick={() => { setEditingCommentId(c.id); setEditCommentContent(c.content); }} className="p-1.5 text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" title="Sửa"><Edit className="size-4" /></button>}
+                            {canDeleteComment && <button onClick={() => setCommentToDelete(c.id)} className="p-1.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors" title="Xóa"><Trash2 className="size-4" /></button>}
                          </div>
                        </div>
 
@@ -312,9 +318,9 @@ export default function DiscussDetailScreen({ id }: { id: string }) {
                        )}
 
                        <div className="flex items-center rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden h-8 w-fit mt-3">
-                          <button type="button" onClick={() => handleInteractComment(c.id, 'upvote')} className={cn("flex h-full items-center gap-1.5 px-3 text-xs font-bold transition-colors hover:bg-slate-50", isCommentUpvoted ? "text-emerald-600 bg-emerald-50" : "text-slate-500")}><ChevronUp className="size-4" /> <span>{c.upvotes}</span></button>
+                          <button onClick={() => handleInteractComment(c.id, 'upvote')} className={cn("flex h-full items-center gap-1.5 px-3 text-xs font-bold transition-colors hover:bg-slate-50", isCommentUpvoted ? "text-emerald-600 bg-emerald-50" : "text-slate-500")}><ChevronUp className="size-4" /> <span>{c.upvotes}</span></button>
                           <div className="w-px h-full bg-slate-200" />
-                          <button type="button" onClick={() => handleInteractComment(c.id, 'downvote')} className={cn("flex h-full items-center px-2 text-xs font-bold transition-colors hover:bg-slate-50", isCommentDownvoted ? "text-rose-600 bg-rose-50" : "text-slate-400 hover:text-rose-500")}><ChevronDown className="size-4" /></button>
+                          <button onClick={() => handleInteractComment(c.id, 'downvote')} className={cn("flex h-full items-center px-2 text-xs font-bold transition-colors hover:bg-slate-50", isCommentDownvoted ? "text-rose-600 bg-rose-50" : "text-slate-400 hover:text-rose-500")}><ChevronDown className="size-4" /></button>
                        </div>
                      </div>
                   </div>
@@ -378,7 +384,7 @@ export default function DiscussDetailScreen({ id }: { id: string }) {
                   <div className="flex size-10 items-center justify-center rounded-xl bg-blue-100 text-blue-600"><Edit className="size-5" /></div>
                   <div><h3 className="text-lg font-bold text-slate-900">Chỉnh sửa bài viết</h3></div>
                 </div>
-                <button type="button" onClick={() => setIsEditModalOpen(false)} className="rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-rose-500 transition-colors"><X className="size-5" /></button>
+                <button onClick={() => setIsEditModalOpen(false)} className="rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-rose-500 transition-colors"><X className="size-5" /></button>
               </div>
 
               <form onSubmit={handleEditSubmit} className="flex flex-col p-6 gap-5">
