@@ -41,8 +41,11 @@ export default function ProfilePage() {
   }, []);
 
   const handleUpdateUser = useCallback((updatedUser: AuthUser) => {
-    setUser(updatedUser);
-    safeStorage.setItem("leetcode_user", JSON.stringify(updatedUser));
+    setUser(prevUser => {
+      const merged = { ...prevUser, ...updatedUser };
+      safeStorage.setItem("leetcode_user", JSON.stringify(merged));
+      return merged;
+    });
   }, []);
 
 

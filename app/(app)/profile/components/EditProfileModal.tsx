@@ -4,8 +4,7 @@ import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { updateProfile, uploadAvatar } from "@/lib/api/auth";
-import { safeStorage } from "@/lib/utils/storage";
+import { getMe, updateProfile, uploadAvatar } from "@/lib/api/auth";
 import type { AuthUser } from "@/lib/types";
 import { ImageCropModal } from "./ImageCropModal";
 
@@ -37,16 +36,20 @@ export function EditProfileModal({ user, onClose, onUpdate }: EditProfileModalPr
     e.target.value = "";
   };
 
+  const refreshUser = async () => {
+    const res = await getMe();
+    return res.data.data.user;
+  };
+
   const handleCropComplete = async (file: File) => {
     setError(null);
     try {
-      const response = await uploadAvatar(file);
-      const updatedUser = response.data.data.user;
-      const newAvatarUrl = updatedUser.avatarUrl ?? "";
+      await uploadAvatar(file);
+      const fullUser = await refreshUser();
+      const newAvatarUrl = fullUser.avatarUrl ?? "";
 
-      safeStorage.setItem("leetcode_user", JSON.stringify(updatedUser));
       setAvatarPreview(newAvatarUrl);
-      onUpdate(updatedUser);
+      onUpdate(fullUser);
     } catch (err: unknown) {
       const axiosError = err as { response?: { data?: { message?: string } }; message?: string };
       setError(axiosError.response?.data?.message || axiosError.message || "Upload ảnh thất bại");
@@ -69,11 +72,10 @@ export function EditProfileModal({ user, onClose, onUpdate }: EditProfileModalPr
         username,
         birthday: birthday || null,
       };
-      const response = await updateProfile(payload);
-      const updatedUser = response.data.data.user;
+      await updateProfile(payload);
+      const fullUser = await refreshUser();
 
-      safeStorage.setItem("leetcode_user", JSON.stringify(updatedUser));
-      onUpdate(updatedUser);
+      onUpdate(fullUser);
       onClose();
     } catch (err: unknown) {
       const axiosError = err as { response?: { data?: { message?: string } }; message?: string };
