@@ -96,7 +96,7 @@ export function EditProblemModal({ problem, onClose, onSaved }: EditProblemModal
           .map((tc) => ({
             input: tc.input,
             expectedOutput: tc.expectedOutput,
-            isHidden: tc.isHidden,
+          isHidden: tc.isHidden ?? false,
           })),
       };
 

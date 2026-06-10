@@ -112,6 +112,7 @@ export function RecentActivity({ user }: RecentActivityProps) {
   const renderItem = (item: any, i: number) => {
     if (activeTab === 'list') {
       const prob = item.problem;
+      if (!prob) return null;
       const diffLabel = ['Easy', 'Medium', 'Hard'][prob.difficulty] || 'Medium';
       const diffColor = ['text-cyan-400', 'text-orange-400', 'text-red-400'][prob.difficulty] || 'text-orange-400';
       return (
@@ -149,7 +150,7 @@ export function RecentActivity({ user }: RecentActivityProps) {
             </div>
             <div className="min-w-0">
               <h4 className="text-sm font-medium text-gray-900 hover:text-orange-600 truncate">
-                {item.problem.title}
+                {item.problem?.title ?? 'Unknown Problem'}
               </h4>
               <span className={`text-[10px] font-medium uppercase ${statusColor(item.status)}`}>
                 {statusLabel(item.status)}
@@ -229,7 +230,7 @@ export function RecentActivity({ user }: RecentActivityProps) {
                     </div>
                     <div className="min-w-0">
                       <h4 className="text-sm font-medium text-gray-900 hover:text-orange-600 truncate">
-                        {activity.problem.title}
+                        {activity.problem?.title ?? 'Unknown Problem'}
                       </h4>
                       <p className="text-[10px] text-gray-400 uppercase tracking-wider">Accepted</p>
                     </div>
