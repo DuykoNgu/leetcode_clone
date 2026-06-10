@@ -89,7 +89,7 @@ export function EditorialTab({
               <div className="rounded-xl overflow-hidden border border-slate-200 shadow-sm">
                 <div className="flex items-center justify-between bg-[#0f172a] px-4 py-2.5">
                   <div className="flex items-center gap-2">
-                    <Code2 className="size-3.5 text-slate-400" />
+                    <Code2 className="size-2 text-slate-400" />
                     <span className="text-xs font-semibold text-slate-300 uppercase tracking-wider">
                       {language ?? "Solution"}
                     </span>
@@ -100,7 +100,7 @@ export function EditorialTab({
                     <span className="size-2.5 rounded-full bg-green-500/60" />
                   </div>
                 </div>
-                <pre className="overflow-x-auto bg-[#1e293b] p-5 text-xs leading-relaxed text-[#e2e8f0] font-mono">
+                <pre className="overflow-x-auto bg-[#1e293b] p-5 text-[9px] leading-relaxed text-[#e2e8f0] font-mono">
                   {displayCode}
                 </pre>
               </div>

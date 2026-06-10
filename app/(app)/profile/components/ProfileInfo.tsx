@@ -96,7 +96,7 @@ export function ProfileInfo({ user, onUpdate }: ProfileInfoProps) {
         <div className="space-y-4">
           {communityStats.map((stat) => (
             <div key={stat.label} className="flex items-center gap-3">
-              <stat.icon className={`h-4 w-4 ${stat.color.replace('text-', 'text-opacity-80 text-')}`} />
+              <stat.icon className={`h-4 w-4 ${stat.color}`} />
               <div className="flex-1">
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-gray-600">{stat.label}</span>

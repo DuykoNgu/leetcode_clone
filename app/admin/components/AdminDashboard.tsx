@@ -6,23 +6,26 @@ import {
   Users,
   BookOpen,
   Download,
+  Megaphone,
 } from "lucide-react";
 import { AdminLayout, type NavItem } from "@/components/ui/dashboard-with-collapsible-sidebar";
 import { OverviewContent } from "./OverviewContent";
 import { UsersContent } from "./UsersContent";
 import { ProblemsContent } from "./ProblemsContent";
 import ScraperTool from "./ScraperTool";
+import AnnouncementsContent from "./AnnouncementsContent";
 import { useAuth } from "@/hooks/useAuth";
 import { getAdminUsers } from "@/lib/api/auth";
 import { getAdminStats, getProblems } from "@/lib/api/problems";
 import { toast } from "sonner";
 
-type Tab = "overview" | "users" | "problems" | "scraper";
+type Tab = "overview" | "users" | "problems" | "scraper" | "announcements";
 
 const NAV_ITEMS: NavItem[] = [
   { id: "overview", label: "Overview", icon: LayoutDashboard },
   { id: "users", label: "Users", icon: Users },
   { id: "problems", label: "Problems", icon: BookOpen },
+  { id: "announcements", label: "Announcements", icon: Megaphone },
   { id: "scraper", label: "Scraper", icon: Download },
 ];
 
@@ -95,6 +98,7 @@ export default function AdminDashboard() {
       )}
       {activeTab === "users" && <UsersContent users={users} />}
       {activeTab === "problems" && <ProblemsContent problems={problems} onRefresh={fetchData} />}
+      {activeTab === "announcements" && <AnnouncementsContent />}
       {activeTab === "scraper" && <ScraperTool />}
     </AdminLayout>
   );

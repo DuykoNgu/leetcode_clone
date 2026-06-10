@@ -1,7 +1,7 @@
 "use client";
 
 import Editor from "@monaco-editor/react";
-import { Check, Play, ChevronUp, Terminal, RotateCcw, Loader2 } from "lucide-react";
+import { Check, Play, ChevronUp, ChevronDown, Terminal, RotateCcw, Loader2, X, Plus, Minus } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -23,8 +23,8 @@ type CodeEditorProps = {
   setShowConsole?: (show: boolean) => void;
 };
 
-const editorOptions = {
-  fontSize: 14,
+const getEditorOptions = (fontSize: number) => ({
+  fontSize,
   minimap: { enabled: false },
   scrollBeyondLastLine: false,
   automaticLayout: true,
@@ -40,7 +40,7 @@ const editorOptions = {
     verticalScrollbarSize: 8,
     horizontalScrollbarSize: 8,
   },
-};
+});
 
 export default function CodeEditor({
   value,
@@ -60,6 +60,11 @@ export default function CodeEditor({
   const [localLanguage, setLocalLanguage] = useState(language);
   const currentLanguage = onLanguageChange ? language : localLanguage;
   const [localShowConsole, setLocalShowConsole] = useState(false);
+  const [expandedTestCase, setExpandedTestCase] = useState<number | null>(null);
+  const [fontSize, setFontSize] = useState(14);
+
+  const zoomIn = () => setFontSize(f => Math.min(f + 2, 40));
+  const zoomOut = () => setFontSize(f => Math.max(f - 2, 8));
 
   const isConsoleOpen = showConsole !== undefined ? showConsole : localShowConsole;
 
@@ -98,6 +103,14 @@ export default function CodeEditor({
           </select>
           <Button variant="ghost" size="icon" onClick={onReset} className="h-8 w-8 text-slate-400 hover:text-slate-600">
             <RotateCcw className="size-3.5" />
+          </Button>
+          <span className="mx-1 h-5 w-px bg-slate-200" />
+          <Button variant="ghost" size="icon" onClick={zoomOut} className="h-8 w-8 text-slate-400 hover:text-slate-600">
+            <Minus className="size-3.5" />
+          </Button>
+          <span className="min-w-[20px] text-center text-[11px] font-semibold text-slate-500 tabular-nums">{fontSize}</span>
+          <Button variant="ghost" size="icon" onClick={zoomIn} className="h-8 w-8 text-slate-400 hover:text-slate-600">
+            <Plus className="size-3.5" />
           </Button>
         </div>
 
@@ -142,7 +155,7 @@ export default function CodeEditor({
           value={value}
           onChange={(nextValue) => onChange(nextValue ?? "")}
           theme="vs-dark"
-          options={editorOptions}
+          options={getEditorOptions(fontSize)}
         />
       </div>
 
@@ -190,18 +203,76 @@ export default function CodeEditor({
                   </div>
                 </div>
 
-                {/* Error/Output Message */}
-                {runResult.message && (
+                  {/* Per-test-case list */}
+                {runResult.testCaseResults && runResult.testCaseResults.length > 0 ? (
                   <div className="space-y-1">
-                    <div className="text-[11px] text-slate-500 font-bold uppercase tracking-wider">Kết quả chi tiết / Nhật ký lỗi:</div>
-                    <pre className="p-3 bg-slate-900 border border-slate-800 rounded-lg text-slate-300 text-xs overflow-x-auto whitespace-pre-wrap font-mono leading-relaxed max-h-36">
-                      {runResult.message}
-                    </pre>
+                    {runResult.testCaseResults.map((tc, i) => {
+                      const isExpanded = expandedTestCase === i;
+                      const isPassed = tc.passed;
+                      const statusLabel = tc.status?.replace("_", " ") || "unknown";
+                      return (
+                        <div key={i}>
+                          <button
+                            type="button"
+                            onClick={() => setExpandedTestCase(isExpanded ? null : i)}
+                            className={cn(
+                              "flex w-full items-center gap-2 px-3 py-1.5 rounded text-xs transition-colors",
+                              isPassed
+                                ? "text-slate-400 hover:bg-slate-900/50"
+                                : "text-slate-300 hover:bg-slate-900/50 cursor-pointer"
+                            )}
+                          >
+                            {isPassed ? (
+                              <Check className="size-3.5 shrink-0 text-emerald-500" />
+                            ) : (
+                              <X className="size-3.5 shrink-0 text-rose-500" />
+                            )}
+                            <span className="font-medium">Testcase {i + 1}</span>
+                            {!isPassed && (
+                              <span className="text-[10px] uppercase tracking-wider font-semibold text-rose-400/80">
+                                {statusLabel}
+                              </span>
+                            )}
+                            <ChevronDown className={cn(
+                              "size-3 ml-auto text-slate-500 transition-transform shrink-0",
+                              isExpanded && "rotate-180"
+                            )} />
+                          </button>
+                          {/* Expanded details for all test cases */}
+                          {isExpanded && (
+                            <div className="ml-7 mr-2 p-2.5 bg-slate-900 border border-slate-800 rounded text-xs space-y-1.5 mb-1">
+                              <div>
+                                <span className="font-bold text-slate-400">Input: </span>
+                                <span className="text-slate-300 whitespace-pre-wrap break-all">{tc.input}</span>
+                              </div>
+                              <div>
+                                <span className="font-bold text-emerald-400">Expected: </span>
+                                <span className="text-emerald-300 whitespace-pre-wrap break-all">{tc.expectedOutput}</span>
+                              </div>
+                              <div>
+                                <span className={cn("font-bold", isPassed ? "text-emerald-400" : "text-rose-400")}>Got: </span>
+                                <span className={cn("whitespace-pre-wrap break-all", isPassed ? "text-emerald-300" : "text-rose-300")}>{tc.actualOutput}</span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
+                ) : (
+                  /* Fallback: show message for compile error or other non-testcase errors */
+                  runResult.message && (
+                    <div className="space-y-1">
+                      <div className="text-[11px] text-slate-500 font-bold uppercase tracking-wider">Kết quả chi tiết / Nhật ký lỗi:</div>
+                      <pre className="p-3 bg-slate-900 border border-slate-800 rounded-lg text-slate-300 text-xs overflow-x-auto whitespace-pre-wrap font-mono leading-relaxed max-h-36">
+                        {runResult.message}
+                      </pre>
+                    </div>
+                  )
                 )}
 
                 {/* Success Message */}
-                {runResult.success && !runResult.message && (
+                {runResult.success && (
                   <div className="text-emerald-400 flex items-center gap-1.5 text-xs bg-emerald-500/5 p-3 rounded-lg border border-emerald-500/10">
                     <Check className="size-4 text-emerald-500" />
                     <span>Chúc mừng! Tất cả các trường hợp kiểm thử (testcases) đã chạy thành công.</span>

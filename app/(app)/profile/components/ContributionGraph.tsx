@@ -52,12 +52,10 @@ export function ContributionGraph({ user }: { user: AuthUser }) {
             Max streak: <span className="text-gray-900 font-bold">{user.streakDays ?? 0}</span>
           </div>
           <div className="flex items-center gap-1">
-            Current: <span className="text-gray-900 font-bold">Current</span>
+            Current: <span className="text-gray-900 font-bold">{user.streakDays ?? 0}</span>
           </div>
         </div>
       </div>
-      {/* ... rest remains same ... */}
-
       <div className="relative">
         <div 
           className="grid grid-flow-col gap-1 overflow-x-auto pb-2" 

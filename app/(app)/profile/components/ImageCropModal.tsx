@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback } from "react";
 import Cropper, { Area } from "react-easy-crop";
 import { Button } from "@/components/ui/button";
 
@@ -53,7 +53,6 @@ export function ImageCropModal({ imageUrl, onCropComplete, onCancel }: ImageCrop
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const cropperRef = useRef<HTMLDivElement>(null);
 
   const onCropChange = useCallback((location: { x: number; y: number }) => {
     setCrop(location);
@@ -91,10 +90,7 @@ export function ImageCropModal({ imageUrl, onCropComplete, onCancel }: ImageCrop
         <h2 className="mb-1 text-lg font-bold text-gray-900">Cắt ảnh đại diện</h2>
         <p className="mb-4 text-xs text-gray-400">Kéo thả để căn chỉnh ảnh trong khung</p>
 
-        <div
-          ref={cropperRef}
-          className="relative mx-auto h-80 w-full overflow-hidden rounded-lg bg-gray-100"
-        >
+        <div className="relative mx-auto h-80 w-full overflow-hidden rounded-lg bg-gray-100">
           <Cropper
             image={imageUrl}
             crop={crop}

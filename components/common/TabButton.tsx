@@ -31,7 +31,7 @@ export function TabButton({
       {label}
       {/* Active indicator */}
       <span className={cn(
-        "absolute bottom-0 left-2 right-2 h-[2.5px] rounded-full transition-all duration-150",
+        "absolute bottom-0 left-2 right-2 h-[2.5px] rounded-full transition-all duration-150 will-change-transform",
         active ? "bg-brand-orange scale-x-100" : "bg-transparent scale-x-0 group-hover:bg-slate-300 group-hover:scale-x-100"
       )} />
     </button>

@@ -200,8 +200,8 @@ export default function ProblemDetailPage({ params }: { params: Promise<{ id: st
       <ProblemHeader title={problem.title} />
       
       <main className="flex flex-1 min-h-0 gap-4 p-4">
-        {/* Left Column: Tabs & Content (40%) */}
-        <div className="flex flex-col flex-[4] min-w-0 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+        {/* Left Column: Tabs & Content (30%) */}
+        <div className="flex flex-col flex-[3] min-w-0 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
           {/* Tab Headers */}
           <div className="flex items-center border-b border-slate-100 bg-slate-50/50 px-2">
             <TabButton 
@@ -225,32 +225,40 @@ export default function ProblemDetailPage({ params }: { params: Promise<{ id: st
           </div>
 
           {/* Tab Content */}
-          <div className="flex-1 overflow-hidden">
+          <div className="flex-1 overflow-hidden relative">
             {activeTab === "description" && (
-              <DecriptionQuestion
-                title={problem.title}
-                difficulty={difficultyMap[problem.difficulty] || "Medium"}
-                description={problem.description}
-                examples={problem.examples?.length ? problem.examples : (problem.testCases?.map(tc => ({
-                  input: tc.input,
-                  output: tc.expectedOutput
-                })) || [])}
-                constraints={problem.constraints?.map(c => c.content) || []} 
-              />
+              <div key="desc" className="animate-fade-in h-full">
+                <DecriptionQuestion
+                  title={problem.title}
+                  difficulty={difficultyMap[problem.difficulty] || "Medium"}
+                  description={problem.description}
+                  examples={problem.examples?.length ? problem.examples : (problem.testCases?.map(tc => ({
+                    input: tc.input,
+                    output: tc.expectedOutput
+                  })) || [])}
+                  constraints={problem.constraints?.map(c => c.content) || []} 
+                />
+              </div>
             )}
-            {activeTab === "editorial" && <EditorialTab problem={problem} language={language} />}
+            {activeTab === "editorial" && (
+              <div key="edit" className="animate-fade-in h-full">
+                <EditorialTab problem={problem} language={language} />
+              </div>
+            )}
             {activeTab === "submissions" && (
-              <SubmissionsTab 
-                problem={problem} 
-                onViewSubmission={handleViewSubmission} 
-              />
+              <div key="subs" className="animate-fade-in h-full">
+                <SubmissionsTab 
+                  problem={problem} 
+                  onViewSubmission={handleViewSubmission} 
+                />
+              </div>
             )}
           </div>
 
         </div>
 
-        {/* Right Column: Code Editor (60%) */}
-        <div className="flex flex-col flex-[6] min-w-0">
+        {/* Right Column: Code Editor (70%) */}
+        <div className="flex flex-col flex-[7] min-w-0">
           <CodeEditor 
             value={code} 
             onChange={setCode}

@@ -1,18 +1,6 @@
 "use client";
 
-/**
- * FILE: app/admin/components/ScraperTool.tsx
- *
- * Giao diện Admin để cào bài tập từ LeetCode.
- * Tính năng:
- *  - Chọn số lượng bài cần cào (1 – 500)
- *  - Nút Start / Stop
- *  - Progress bar real-time qua SSE
- *  - Log terminal cuộn tự động
- *  - Hiển thị kết quả tổng kết sau khi xong
- */
-
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import {
   Play,
   Square,
