@@ -33,6 +33,14 @@ export const deleteProblem = async (id: string): Promise<void> => {
   await apiClient.delete(`/problems/${id}`);
 };
 
+export interface TestCaseResult {
+  passed: boolean;
+  input: string;
+  expectedOutput: string;
+  actualOutput: string;
+  status: string;
+}
+
 export interface ExecuteResult {
   success: boolean;
   status: string;
@@ -40,6 +48,7 @@ export interface ExecuteResult {
   total: number;
   message: string;
   submissionId: number | null;
+  testCaseResults?: TestCaseResult[];
 }
 
 export const runCode = async (
@@ -57,10 +66,6 @@ export const runCode = async (
   return response.data;
 };
 export const getRandomProblem = async (): Promise<string | null> => {
-  try {
-    const response = await apiClient.get("/problems/random");
-    return response.data.data.id;
-  } catch (error) {
-    throw error;
-  }
+  const response = await apiClient.get("/problems/random");
+  return response.data.data.id;
 };

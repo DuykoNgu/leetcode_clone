@@ -88,6 +88,7 @@ export function ProblemsContent({
           <table className="w-full text-left text-sm">
             <thead className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-800">
               <tr>
+                <th className="px-4 py-3 font-semibold text-gray-700 dark:text-gray-300 w-12 text-center">#</th>
                 <th className="px-6 py-3 font-semibold text-gray-700 dark:text-gray-300">Title</th>
                 <th className="px-6 py-3 font-semibold text-gray-700 dark:text-gray-300">Difficulty</th>
                 <th className="px-6 py-3 font-semibold text-gray-700 dark:text-gray-300">Status</th>
@@ -95,10 +96,12 @@ export function ProblemsContent({
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-              {paged.map((p) => (
+              {paged.map((p, idx) => (
                 <tr key={p.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                  <td className="px-4 py-4 text-center text-xs text-slate-400 font-mono">
+                    {(page - 1) * PAGE_SIZE + idx + 1}
+                  </td>
                   <td className="px-6 py-4 font-medium text-gray-900 dark:text-gray-100">
-                    <span className="text-slate-400 mr-2">#{p.id}</span>
                     {p.title}
                   </td>
                   <td className="px-6 py-4">

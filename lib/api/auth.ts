@@ -52,6 +52,34 @@ export async function getAdminUsers() {
   return response.data;
 }
 
+// Saved problems
+export async function getSavedProblems(page = 1, limit = 20) {
+  const response = await apiClient.get("/me/saved", { params: { page, limit } });
+  return response.data;
+}
+
+export async function toggleSaveProblem(problemId: string) {
+  const response = await apiClient.post(`/me/saved/${problemId}`);
+  return response.data;
+}
+
+// User submissions
+export async function getUserSubmissions(page = 1, limit = 20) {
+  const response = await apiClient.get("/me/submissions", { params: { page, limit } });
+  return response.data;
+}
+
+export async function getSubmissionDetail(submissionId: string) {
+  const response = await apiClient.get(`/me/submissions/${submissionId}`);
+  return response.data;
+}
+
+// User discussions
+export async function getUserDiscussions(page = 1, limit = 20) {
+  const response = await apiClient.get("/me/discussions", { params: { page, limit } });
+  return response.data;
+}
+
 export function persistAuthSession(payload: AuthSuccessResponse["data"]) {
   safeStorage.setItem("leetcode_token", payload.token);
   safeStorage.setItem("leetcode_user", JSON.stringify(payload.user));

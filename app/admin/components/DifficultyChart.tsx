@@ -1,64 +1,60 @@
 "use client";
 
-import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts";
+import { Pie, PieChart, ResponsiveContainer, Cell } from "recharts";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/line-charts-1";
+import { BarChart3 } from "lucide-react";
 
-const chartConfig = {
-  value: {
-    label: "Số lượng",
-  },
-};
+const chartConfig = {};
 
 export function DifficultyChart({
   data,
 }: {
   data: { name: string; value: number; color: string }[];
 }) {
+  const total = data.reduce((s, d) => s + d.value, 0);
+
   return (
-    <div className="border rounded-xl border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm p-6">
-      <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-4">
-        Phân bố độ khó câu hỏi
-      </h3>
-      <ChartContainer config={chartConfig} className="h-[250px] w-full">
-        <BarChart
-          data={data}
-          margin={{ top: 5, right: 10, left: 0, bottom: 5 }}
-        >
-          <CartesianGrid
-            strokeDasharray="3 3"
-            stroke="var(--border)"
-            vertical={false}
-          />
-          <XAxis
-            dataKey="name"
-            axisLine={false}
-            tickLine={false}
-            tick={{ fontSize: 12, fill: "var(--muted-foreground)" }}
-            dy={8}
-          />
-          <YAxis
-            axisLine={false}
-            tickLine={false}
-            tick={{ fontSize: 12, fill: "var(--muted-foreground)" }}
-            allowDecimals={false}
-          />
-          <ChartTooltip
-            content={
-              <ChartTooltipContent
-                formatter={(value: unknown) => (
-                  <span className="font-bold">{String(value)} bài</span>
-                )}
-              />
-            }
-            cursor={{ fill: "var(--muted)", opacity: 0.3 }}
-          />
-          <Bar dataKey="value" radius={[6, 6, 0, 0]} maxBarSize={80}>
-            {data.map((entry, index) => (
-              <Cell key={index} fill={entry.color} />
-            ))}
-          </Bar>
-        </BarChart>
+    <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+      <div className="flex items-center gap-2 mb-4">
+        <BarChart3 className="size-4 text-green-500" />
+        <h3 className="text-sm font-semibold text-gray-700">Problem Difficulty</h3>
+      </div>
+
+      <ChartContainer config={chartConfig} className="h-[220px] w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <ChartTooltip
+              content={<ChartTooltipContent formatter={(value: unknown) => <span className="font-bold">{String(value)} bài</span>} />}
+            />
+            <Pie
+              data={data}
+              dataKey="value"
+              nameKey="name"
+              cx="50%"
+              cy="50%"
+              innerRadius={55}
+              outerRadius={85}
+              paddingAngle={3}
+              strokeWidth={0}
+            >
+              {data.map((entry, i) => (
+                <Cell key={i} fill={entry.color} />
+              ))}
+            </Pie>
+          </PieChart>
+        </ResponsiveContainer>
       </ChartContainer>
+
+      <div className="flex items-center justify-center gap-5 mt-2">
+        {data.map((d) => (
+          <div key={d.name} className="flex items-center gap-1.5 text-xs">
+            <span className="size-2.5 rounded-full" style={{ backgroundColor: d.color }} />
+            <span className="text-gray-500">{d.name}</span>
+            <span className="font-bold text-gray-700">{d.value}</span>
+            <span className="text-gray-400">({total > 0 ? Math.round((d.value / total) * 100) : 0}%)</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

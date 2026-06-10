@@ -8,7 +8,6 @@ import RightSidebar from "./components/dashboard/RightSidebar";
 
 export default function DashboardPage() {
   const { authUser, isLoading } = useAuth();
-  const isAdmin = authUser?.role === 'admin';
 
   if (isLoading) return <div className="h-screen flex items-center justify-center text-slate-400">Đang tải trung tâm điều khiển...</div>;
 
@@ -27,14 +26,14 @@ export default function DashboardPage() {
         </header>
 
         {/* Banner Contest */}
-        <HeroBanner isAdmin={isAdmin} />
+        <HeroBanner />
 
         {/* Khung chứa nội dung 2 cột */}
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
           
           {/* CỘT TRÁI (65%): Bảng tin & Đang rôm rả */}
           <div className="lg:col-span-8 flex flex-col gap-8">
-            <AnnouncementList isAdmin={isAdmin} />
+            <AnnouncementList />
             <TrendingDiscuss />
           </div>
 

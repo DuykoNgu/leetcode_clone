@@ -65,8 +65,8 @@ export function useAuth() {
     try {
       const res = await refreshTokenApi({ refreshToken: token });
       persistTokenSession(res.data.accessToken, res.data.refreshToken, authUser);
-    } catch (e) {
-      console.warn("Token refresh failed:", e);
+    } catch {
+      // silently ignore refresh failure
     }
   }, [authUser]);
 
@@ -103,16 +103,12 @@ export function useAuth() {
   const logout = useCallback(async () => {
     try {
       await logoutApi();
-    } catch (e: any) {
-      if (e.response?.status !== 401) {
-        console.error("Logout error:", e);
-      }
+    } catch {
+      // ignore API errors during logout
     } finally {
       clearPersistedAuthSession();
       setAuthUser(null);
       window.dispatchEvent(new Event("storage"));
-      document.documentElement.classList.remove("dark");
-      localStorage.removeItem("theme");
       toast.info("Đã đăng xuất");
       router.push("/");
     }
