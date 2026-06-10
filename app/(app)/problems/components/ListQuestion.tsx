@@ -52,6 +52,10 @@ export default function ListQuestion({
           search: effectiveSearch || undefined,
           page,
           limit: 10,
+          ...(sortBy !== "default" && {
+            sortBy: sortBy === "acceptance" ? "acceptanceRate" : sortBy,
+            sortOrder: sortDirection,
+          }),
         };
         const response = await getProblems(params);
 
@@ -92,7 +96,7 @@ export default function ListQuestion({
       }
     };
     fetchData();
-  }, [isAuthenticated, effectiveSearch, effectiveCategory, effectiveDifficulty, page]);
+  }, [isAuthenticated, effectiveSearch, effectiveCategory, effectiveDifficulty, page, sortBy, sortDirection]);
 
   useEffect(() => { setPage(1); }, [effectiveSearch, effectiveCategory, effectiveDifficulty]);
 
