@@ -1,5 +1,5 @@
 import apiClient from "./client";
-import type { ApiProblem, ProblemsResponse, UpdateProblemPayload } from "@/lib/types";
+import type { ApiProblem, ProblemsResponse, UpdateProblemPayload, CreateProblemPayload } from "@/lib/types";
 
 export const getProblems = async (params?: {
   category?: string;
@@ -22,6 +22,10 @@ export const getProblemDetail = async (id: string): Promise<ApiProblem> => {
 export const getAdminStats = async (): Promise<any> => {
   const response = await apiClient.get("/problems/admin/stats");
   return response.data;
+};
+
+export const createProblem = async (data: CreateProblemPayload): Promise<void> => {
+  await apiClient.post("/problems", data);
 };
 
 export const updateProblem = async (id: string, data: UpdateProblemPayload): Promise<ApiProblem> => {

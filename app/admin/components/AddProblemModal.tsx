@@ -4,8 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Plus, Trash2, Eye, Edit3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { updateProblem } from "@/lib/api/problems";
-import type { ApiProblem, UpdateProblemPayload } from "@/lib/types";
+import { createProblem } from "@/lib/api/problems";
 import { toast } from "sonner";
 
 const LANGUAGES = ["javascript", "typescript", "python", "java", "cpp"];
@@ -16,37 +15,28 @@ const DIFFICULTY_OPTIONS = [
   { value: 2, label: "Hard" },
 ];
 
-interface EditProblemModalProps {
-  problem: ApiProblem;
+interface AddProblemModalProps {
   onClose: () => void;
   onSaved: () => void;
 }
 
-export function EditProblemModal({ problem, onClose, onSaved }: EditProblemModalProps) {
-  const [title, setTitle] = useState(problem.title);
-  const [difficulty, setDifficulty] = useState(problem.difficulty);
-  const [description, setDescription] = useState(problem.description);
+export function AddProblemModal({ onClose, onSaved }: AddProblemModalProps) {
+  const [title, setTitle] = useState("");
+  const [difficulty, setDifficulty] = useState(1);
+  const [description, setDescription] = useState("");
   const [codeTemplates, setCodeTemplates] = useState(
-    LANGUAGES.map((lang) => {
-      const existing = problem.codeTemplates?.find((t) => t.language === lang);
-      return {
-        language: lang,
-        starterCode: existing?.starterCode || "",
-        solutionCode: existing?.solutionCode || "",
-      };
-    })
+    LANGUAGES.map((lang) => ({
+      language: lang,
+      starterCode: "",
+      solutionCode: "",
+    }))
   );
-  const [testCases, setTestCases] = useState(
-    (problem.testCases?.length
-      ? problem.testCases.map((tc) => ({
-          input: tc.input,
-          expectedOutput: tc.expectedOutput,
-          isHidden: tc.isHidden,
-        }))
-      : [{ input: "", expectedOutput: "", isHidden: false }])
-  );
+  const [testCases, setTestCases] = useState([{ input: "", expectedOutput: "", isHidden: false }]);
   const [saving, setSaving] = useState(false);
   const [descMode, setDescMode] = useState<"edit" | "preview">("edit");
+  const [methodName, setMethodName] = useState("main");
+  const [returnType, setReturnType] = useState("");
+  const [paramTypes, setParamTypes] = useState("");
 
   const handleTemplateChange = (lang: string, field: "starterCode" | "solutionCode", value: string) => {
     setCodeTemplates((prev) =>
@@ -82,10 +72,25 @@ export function EditProblemModal({ problem, onClose, onSaved }: EditProblemModal
 
     setSaving(true);
     try {
-      const payload: UpdateProblemPayload = {
+      const metadata: Record<string, any> = {
+        name: methodName.trim() || "main",
+      };
+      if (returnType.trim()) {
+        metadata.return = { type: returnType.trim() };
+      }
+      if (paramTypes.trim()) {
+        metadata.params = paramTypes
+          .split(",")
+          .map((t) => t.trim())
+          .filter(Boolean)
+          .map((type) => ({ type }));
+      }
+
+      await createProblem({
         title: title.trim(),
         difficulty,
         description,
+        metadata,
         codeTemplates: codeTemplates.map((t) => ({
           language: t.language,
           starterCode: t.starterCode,
@@ -96,16 +101,14 @@ export function EditProblemModal({ problem, onClose, onSaved }: EditProblemModal
           .map((tc) => ({
             input: tc.input,
             expectedOutput: tc.expectedOutput,
-          isHidden: tc.isHidden ?? false,
+            isHidden: tc.isHidden ?? false,
           })),
-      };
-
-      await updateProblem(problem.id, payload);
-      toast.success("Cập nhật bài tập thành công");
+      });
+      toast.success("Thêm bài tập thành công");
       onSaved();
       onClose();
     } catch (err: any) {
-      const msg = err.response?.data?.message || err.message || "Lỗi khi cập nhật bài tập";
+      const msg = err.response?.data?.message || err.message || "Lỗi khi thêm bài tập";
       toast.error(msg);
     } finally {
       setSaving(false);
@@ -131,8 +134,8 @@ export function EditProblemModal({ problem, onClose, onSaved }: EditProblemModal
         transition={{ duration: 0.25, ease: "easeOut" }}
         className="relative z-10 w-full max-w-3xl rounded-xl border border-slate-200 bg-white p-6 shadow-2xl"
       >
-        <h2 className="text-lg font-bold text-slate-900">Chỉnh sửa bài tập</h2>
-        <p className="mb-5 text-xs text-slate-400">Cập nhật thông tin bài tập và đáp án</p>
+        <h2 className="text-lg font-bold text-slate-900">Thêm bài tập mới</h2>
+        <p className="mb-5 text-xs text-slate-400">Tạo bài tập thủ công</p>
 
         <div className="space-y-5 max-h-[70vh] overflow-y-auto pr-1">
           {/* Title */}
@@ -199,6 +202,44 @@ export function EditProblemModal({ problem, onClose, onSaved }: EditProblemModal
                 dangerouslySetInnerHTML={{ __html: description || "<p class='text-slate-400 italic'>No description</p>" }}
               />
             )}
+          </div>
+
+          {/* Function Signature */}
+          <div>
+            <label className="mb-1.5 block text-xs font-medium text-slate-700">Function Signature</label>
+            <p className="mb-2 text-[10px] text-slate-400">Khai báo thông tin hàm để hệ thống có thể chạy code</p>
+            <div className="grid grid-cols-3 gap-3">
+              <div>
+                <label className="mb-1 block text-[10px] font-medium text-slate-400">Method Name</label>
+                <input
+                  type="text"
+                  value={methodName}
+                  onChange={(e) => setMethodName(e.target.value)}
+                  placeholder="main"
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-[10px] font-medium text-slate-400">Return Type</label>
+                <input
+                  type="text"
+                  value={returnType}
+                  onChange={(e) => setReturnType(e.target.value)}
+                  placeholder="int[]"
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-[10px] font-medium text-slate-400">Param Types</label>
+                <input
+                  type="text"
+                  value={paramTypes}
+                  onChange={(e) => setParamTypes(e.target.value)}
+                  placeholder="int[], int"
+                  className={inputClass}
+                />
+              </div>
+            </div>
           </div>
 
           {/* Code Templates */}
@@ -296,7 +337,7 @@ export function EditProblemModal({ problem, onClose, onSaved }: EditProblemModal
             Hủy
           </Button>
           <Button size="sm" onClick={handleSave} disabled={saving}>
-            {saving ? "Đang lưu..." : "Lưu"}
+            {saving ? "Đang tạo..." : "Tạo"}
           </Button>
         </div>
       </motion.div>

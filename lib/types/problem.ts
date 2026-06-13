@@ -89,6 +89,18 @@ export type ApiProblem = {
   isSolved?: boolean;
 };
 
+export type CreateProblemPayload = {
+  title: string;
+  description?: string;
+  difficulty?: number;
+  metadata?: Record<string, any>;
+  codeTemplates?: { language: string; starterCode: string; solutionCode?: string }[];
+  testCases?: { input: string; expectedOutput: string; isHidden?: boolean }[];
+  examples?: { input: string; output: string; explanation?: string }[];
+  constraints?: { content: string }[];
+  problemTags?: { tag: { name: string; slug: string } }[];
+};
+
 export type UpdateProblemPayload = {
   title?: string;
   description?: string;

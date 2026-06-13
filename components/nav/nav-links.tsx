@@ -7,8 +7,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 const navLinks = [
   { href: "/problems", label: "Bài tập" },
   { href: "/discuss", label: "Thảo luận" },
-  { href: "/interview", label: "Phỏng vấn" },
-  { href: "/contest", label: "Thi đấu" },
+  { href: "/interview", label: "Phỏng vấn", comingSoon: true },
+  { href: "/contest", label: "Thi đấu", comingSoon: true },
 ];
 
 export function NavLinks({
@@ -51,9 +51,27 @@ export function NavLinks({
         <Link
           key={link.href}
           href={link.href}
-          className="text-sm font-medium text-gray-700 transition-colors hover:text-brand-orange"
+          className="group relative text-sm font-medium text-gray-700 transition-colors hover:text-brand-orange"
         >
           {link.label}
+
+          {link.comingSoon && (
+            <span
+              className="
+                pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2
+                rounded-md bg-gray-900 px-2 py-1
+                text-[10px] font-semibold text-brand-orange whitespace-nowrap
+                opacity-0 scale-95
+                transition-all duration-200 ease-out
+                group-hover:opacity-100 group-hover:scale-100
+                shadow-lg
+              "
+            >
+              🚧 coming soon
+              {/* Mũi tên nhỏ */}
+              <span className="absolute left-1/2 -translate-x-1/2 -bottom-1 border-4 border-transparent border-t-gray-900" />
+            </span>
+          )}
         </Link>
       ))}
 
