@@ -20,7 +20,7 @@ type ListQuestionProps = {
 
 export default function ListQuestion({
   searchQuery = "",
-  categoryFilter = "algorithms",
+  categoryFilter = "all-code-essentials",
   difficultyFilter,
   onProblemSelect,
 }: ListQuestionProps) {
@@ -29,7 +29,7 @@ export default function ListQuestion({
   const [localSearch, setLocalSearch] = useState("");
   const debouncedSearch = useDebounce(localSearch, 500);
   const [showSearch, setShowSearch] = useState(false);
-  const [localCategory, setLocalCategory] = useState<ProblemCategory>("algorithms");
+  const [localCategory, setLocalCategory] = useState<ProblemCategory>("all-code-essentials");
   const [localDifficulty, setLocalDifficulty] = useState<string>("");
   const [solvedProblemIds, setSolvedProblemIds] = useState<Set<string>>(new Set());
   const [problems, setProblems] = useState<DBProblem[]>([]);

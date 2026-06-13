@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { Pencil, Trash2, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Pencil, Trash2, Search, ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { getProblemDetail, deleteProblem } from "@/lib/api/problems";
 import type { ApiProblem } from "@/lib/types";
 import { EditProblemModal } from "./EditProblemModal";
+import { AddProblemModal } from "./AddProblemModal";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { toast } from "sonner";
 
@@ -19,6 +20,7 @@ export function ProblemsContent({
 }) {
   const [editingProblem, setEditingProblem] = useState<ApiProblem | null>(null);
   const [loadingEdit, setLoadingEdit] = useState<string | null>(null);
+  const [showAddModal, setShowAddModal] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null);
   const [search, setSearch] = useState("");
@@ -73,15 +75,25 @@ export function ProblemsContent({
   return (
     <>
       <div className="space-y-3">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Tìm kiếm bài tập..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 py-2.5 pl-10 pr-4 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:border-brand-orange focus:outline-none"
-          />
+        <div className="flex items-center justify-between gap-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Tìm kiếm bài tập..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 py-2.5 pl-10 pr-4 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:border-brand-orange focus:outline-none"
+            />
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowAddModal(true)}
+            className="flex items-center gap-1.5 rounded-xl bg-brand-orange px-4 py-2.5 text-sm font-medium text-white hover:opacity-90 transition-opacity"
+          >
+            <Plus className="size-4" />
+            Thêm bài tập
+          </button>
         </div>
 
         <div className="border rounded-xl border-gray-200 dark:border-gray-800 overflow-hidden bg-white dark:bg-gray-900 shadow-sm">
@@ -196,6 +208,13 @@ export function ProblemsContent({
           </div>
         )}
       </div>
+
+      {showAddModal && (
+        <AddProblemModal
+          onClose={() => setShowAddModal(false)}
+          onSaved={onRefresh}
+        />
+      )}
 
       {editingProblem && (
         <EditProblemModal
